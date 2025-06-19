@@ -1,5 +1,7 @@
 <!-- d:\Github\Queue-augment\js\settings.html -->
 <script>
+  console.log("js/settings.html: Script execution started. Checking for showAppConfirmationDialog:", typeof showAppConfirmationDialog);
+
    /**
  * Initializes interactions for the settings page, including tab switching
  * and button event listeners. This function should be called when the
@@ -93,6 +95,271 @@ function initializeSettingsPageInteractions() {
     console.log("Settings page interactions initialized or verified by initializeSettingsPageInteractions.");
 }
 
+// --- Slideshow Image Management Functions (Admin) ---
+function loadAdminSlideshowImages() {
+    const tableBody = document.getElementById('slideshowImagesTableBodyAdmin');
+    const messageDiv = document.getElementById('slideshowImagesTableMessageAdmin');
+
+    if (!tableBody || !messageDiv) {
+        console.error("Slideshow Images: Table body or message div not found in settings.");
+        return;
+    }
+
+    messageDiv.textContent = "กำลังโหลดข้อมูลรูปภาพ...";
+    messageDiv.className = "mt-2 text-sm text-purple-600"; // Default message class
+    tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-center">กำลังโหลดข้อมูลรูปภาพ...</td></tr>';
+
+    google.script.run
+        .withSuccessHandler(function(response) {
+            if (response.success && response.data) {
+                if (response.data.length > 0) {
+                    populateSlideshowImagesTableAdmin(response.data);
+                    messageDiv.textContent = ""; // Clear loading message on success
+                } else {
+                    messageDiv.textContent = "ไม่พบข้อมูลรูปภาพสไลด์โชว์";
+                    tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-center">ไม่พบข้อมูลรูปภาพ</td></tr>';
+                }
+            } else {
+                messageDiv.textContent = response.message || "เกิดข้อผิดพลาดในการโหลดข้อมูลรูปภาพ";
+                messageDiv.className = "mt-2 text-sm text-red-600";
+                tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-center">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>';
+            }
+        })
+        .withFailureHandler(function(error) {
+            messageDiv.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message;
+            messageDiv.className = "mt-2 text-sm text-red-600";
+            tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-center">เกิดข้อผิดพลาดในการเชื่อมต่อ</td></tr>';
+            console.error("Error in getAllSlideshowImagesAdmin call:", error);
+        })
+        .getAllSlideshowImagesAdmin();
+}
+
+function populateSlideshowImagesTableAdmin(images) {
+    const tableBody = document.getElementById('slideshowImagesTableBodyAdmin');
+    if (!tableBody) {
+        console.error("Slideshow Images: Table body not found for population in settings.");
+        return;
+    }
+
+    tableBody.innerHTML = ""; // Clear any previous content
+
+    images.forEach(image => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${image.id}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                <img src="${image.imageUrl}" alt="${escapeJsString(image.title)}" class="w-20 h-12 object-cover rounded" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;text-xs text-red-500&quot;>โหลดภาพไม่ได้</span>';">
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${escapeJsString(image.title)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs" title="${escapeJsString(image.imageUrl)}">${escapeJsString(image.imageUrl)}</td>
+            <td class="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-500">${image.displayOrder}</td>
+            <td class="px-4 py-3 text-center whitespace-nowrap text-sm text-gray-500">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${image.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    ${image.isActive ? 'ใช่' : 'ไม่'}
+                </span>
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                <button onclick="openViewSlideshowImageModal('${escapeJsString(image.imageUrl)}', '${escapeJsString(image.title)}')" class="text-blue-600 hover:text-blue-900 mr-2" title="ดูภาพ">ดู</button>
+                <button onclick="openEditSlideshowImageModal('${image.id}', '${escapeJsString(image.imageUrl)}', '${escapeJsString(image.title)}', '${image.displayOrder}', ${image.isActive})" class="text-indigo-600 hover:text-indigo-900 mr-2" title="แก้ไข">แก้ไข</button>
+                <button onclick="deleteSlideshowImage('${image.id}')" class="text-red-600 hover:text-red-900" title="ลบ">ลบ</button>
+            </td>
+        `;
+    });
+}
+
+// This escapeJsString function was already provided and should be here or globally available.
+// function escapeJsString(str) {
+//     if (typeof str !== 'string') return '';
+//     return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+// }
+// --- END Slideshow Image Management Functions (Admin) ---
+
+// --- Slideshow Image Modal Functions ---
+function openViewSlideshowImageModal(imageUrl, imageTitle) {
+    const modal = document.getElementById('viewSlideshowImageModal');
+    const imgPreview = document.getElementById('viewSlideshowImagePreview');
+    const imgCaption = document.getElementById('viewSlideshowImageCaption');
+
+    if (modal && imgPreview && imgCaption) {
+        imgPreview.src = imageUrl;
+        imgPreview.alt = imageTitle || "Image Preview";
+        imgCaption.textContent = imageTitle || "";
+        modal.classList.remove('hidden');
+    } else {
+        console.error("View Slideshow Image Modal or its elements not found.");
+    }
+}
+
+function closeViewSlideshowImageModal() {
+    const modal = document.getElementById('viewSlideshowImageModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function openAddSlideshowImageModal() {
+    const modal = document.getElementById('addSlideshowImageModal');
+    if (modal) {
+        // Clear previous values
+        document.getElementById('newSlideshowImageUrl').value = '';
+        document.getElementById('newSlideshowImageTitle').value = '';
+        document.getElementById('newSlideshowImageOrder').value = '';
+        document.getElementById('newSlideshowImageIsActive').checked = true;
+        document.getElementById('addSlideshowImageModalMessage').textContent = '';
+        modal.classList.remove('hidden');
+    } else {
+        console.error("Add Slideshow Image Modal not found.");
+    }
+}
+
+function closeAddSlideshowImageModal() {
+    const modal = document.getElementById('addSlideshowImageModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function saveNewSlideshowImage() {
+    const imageUrl = document.getElementById('newSlideshowImageUrl').value.trim();
+    const title = document.getElementById('newSlideshowImageTitle').value.trim();
+    const displayOrder = parseInt(document.getElementById('newSlideshowImageOrder').value);
+    const isActive = document.getElementById('newSlideshowImageIsActive').checked;
+    const messageDiv = document.getElementById('addSlideshowImageModalMessage');
+
+    if (!imageUrl) {
+        messageDiv.textContent = 'กรุณากรอก URL รูปภาพ';
+        messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+        return;
+    }
+    // Basic URL validation (can be more sophisticated)
+    try {
+        new URL(imageUrl);
+    } catch (_) {
+        messageDiv.textContent = 'URL รูปภาพไม่ถูกต้อง';
+        messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+        return;
+    }
+    if (isNaN(displayOrder)) {
+        messageDiv.textContent = 'กรุณากรอกลำดับการแสดงผลเป็นตัวเลข';
+        messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+        return;
+    }
+
+    messageDiv.textContent = 'กำลังบันทึก...';
+    messageDiv.className = 'px-6 py-2 text-sm text-blue-600';
+
+    const imageData = {
+        imageUrl: imageUrl,
+        title: title,
+        displayOrder: displayOrder,
+        isActive: isActive
+    };
+
+    google.script.run
+        .withSuccessHandler(function(response) {
+            if (response.success) {
+                messageDiv.textContent = response.message || 'เพิ่มรูปภาพสำเร็จ!';
+                messageDiv.className = 'px-6 py-2 text-sm text-green-600';
+                loadAdminSlideshowImages(); // Refresh the table
+                setTimeout(closeAddSlideshowImageModal, 1500);
+            } else {
+                messageDiv.textContent = response.message || 'เกิดข้อผิดพลาดในการเพิ่มรูปภาพ';
+                messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+            }
+        })
+        .withFailureHandler(function(error) {
+            messageDiv.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+            messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+        })
+        .addSlideshowImage(imageData);
+}
+
+function openEditSlideshowImageModal(id, imageUrl, title, displayOrder, isActive) {
+    const modal = document.getElementById('editSlideshowImageModal');
+    if (modal) {
+        document.getElementById('editSlideshowImageId').value = id;
+        document.getElementById('editSlideshowImageUrl').value = imageUrl;
+        document.getElementById('editSlideshowImageTitle').value = title;
+        document.getElementById('editSlideshowImageOrder').value = displayOrder;
+        document.getElementById('editSlideshowImageIsActive').checked = isActive; // isActive is already boolean
+        document.getElementById('editSlideshowImageModalMessage').textContent = '';
+        modal.classList.remove('hidden');
+    } else {
+        console.error("Edit Slideshow Image Modal not found.");
+    }
+}
+
+function closeEditSlideshowImageModal() {
+    const modal = document.getElementById('editSlideshowImageModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function saveEditSlideshowImage() {
+    const id = document.getElementById('editSlideshowImageId').value;
+    const imageUrl = document.getElementById('editSlideshowImageUrl').value.trim();
+    const title = document.getElementById('editSlideshowImageTitle').value.trim();
+    const displayOrder = parseInt(document.getElementById('editSlideshowImageOrder').value);
+    const isActive = document.getElementById('editSlideshowImageIsActive').checked;
+    const messageDiv = document.getElementById('editSlideshowImageModalMessage');
+
+    // Add validation similar to saveNewSlideshowImage if needed
+
+    messageDiv.textContent = 'กำลังบันทึกการเปลี่ยนแปลง...';
+    messageDiv.className = 'px-6 py-2 text-sm text-blue-600';
+
+    const imageData = { imageUrl, title, displayOrder, isActive };
+
+    google.script.run
+        .withSuccessHandler(function(response) {
+            if (response.success) {
+                messageDiv.textContent = response.message || 'อัปเดตข้อมูลสำเร็จ!';
+                messageDiv.className = 'px-6 py-2 text-sm text-green-600';
+                loadAdminSlideshowImages(); // Refresh table
+                setTimeout(closeEditSlideshowImageModal, 1500);
+            } else {
+                messageDiv.textContent = response.message || 'เกิดข้อผิดพลาดในการอัปเดต';
+                messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+            }
+        })
+        .withFailureHandler(function(error) {
+            messageDiv.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+            messageDiv.className = 'px-6 py-2 text-sm text-red-600';
+        })
+        .updateSlideshowImage(id, imageData);
+}
+
+function deleteSlideshowImage(id) {
+    console.log("deleteSlideshowImage called. Type of showAppConfirmationDialog:", typeof showAppConfirmationDialog);
+    showAppConfirmationDialog(
+        `คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพ ID: ${id}? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+        function() { // onConfirm
+            const messageDiv = document.getElementById('slideshowImagesTableMessageAdmin');
+            if(messageDiv) {
+                messageDiv.textContent = `กำลังลบรูปภาพ ID: ${id}...`;
+                messageDiv.className = 'mt-2 text-sm text-blue-600';
+            }
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showAppToastNotification(response.message || 'ลบรูปภาพสไลด์โชว์สำเร็จ!', 'success');
+                        loadAdminSlideshowImages(); // Refresh table
+                    } else {
+                        showAppToastNotification(response.message || 'เกิดข้อผิดพลาดในการลบรูปภาพ', 'error');
+                    }
+                    if(messageDiv) messageDiv.textContent = ''; // Clear "Deleting..." message
+                })
+                .withFailureHandler(function(error) {
+                    showAppToastNotification('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, 'error');
+                    if(messageDiv) messageDiv.textContent = ''; // Clear "Deleting..." message
+                })
+                .deleteSlideshowImage(id);
+        }
+    );
+}
+// --- END Slideshow Image Modal Functions ---
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Settings script: DOMContentLoaded fired.");
@@ -209,6 +476,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // const initialTabButton = document.getElementById('init-system-tab');
     // if (initialTabButton && tabButtons.length > 0 && tabPanes.length > 0) { ... } // Also handled by initializeSettingsPageInteractions
 
+    // --- Slideshow Image Modal Event Listeners ---
+    const openAddBtn = document.getElementById('openAddSlideshowImageModalBtn');
+    if(openAddBtn) openAddBtn.addEventListener('click', openAddSlideshowImageModal);
+
+    const cancelAddBtn = document.getElementById('cancelNewSlideshowImageBtn');
+    if(cancelAddBtn) cancelAddBtn.addEventListener('click', closeAddSlideshowImageModal);
+
+    const saveNewBtn = document.getElementById('saveNewSlideshowImageBtn');
+    if(saveNewBtn) saveNewBtn.addEventListener('click', saveNewSlideshowImage);
+
+    const cancelEditBtn = document.getElementById('cancelEditSlideshowImageBtn');
+    if(cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditSlideshowImageModal);
+
+    const saveEditBtn = document.getElementById('saveEditSlideshowImageBtn');
+    if(saveEditBtn) saveEditBtn.addEventListener('click', saveEditSlideshowImage);
+
+    const closeViewBtn = document.getElementById('closeViewSlideshowImageModalBtn');
+    if(closeViewBtn) closeViewBtn.addEventListener('click', closeViewSlideshowImageModal);
+    
+    const viewModal = document.getElementById('viewSlideshowImageModal');
+    if (viewModal) viewModal.addEventListener('click', function(event) {
+        if (event.target === viewModal) closeViewSlideshowImageModal(); // Close if backdrop is clicked
+    });
 
    
 });
@@ -868,30 +1158,35 @@ function handleSaveEditSound() {
 }
 
 function handleDeleteSound(id) {
-    if (!confirm(`คุณต้องการลบเสียง ID: ${id} ใช่หรือไม่?`)) {
-        return;
-    }
     const messageEl = document.getElementById('soundTableMessage');
-    messageEl.textContent = `กำลังลบเสียง ID: ${id}...`;
     if (!messageEl) { console.error("handleDeleteSound: messageEl not found"); return; }
-    messageEl.className = 'mt-3 text-sm text-blue-700';
 
-    google.script.run
-        .withSuccessHandler(function(response) {
-            if (response.success) {
-                messageEl.textContent = response.message || 'ลบเสียงสำเร็จ!';
-                messageEl.className = 'mt-3 text-sm text-green-700';
-                loadSoundData();
-            } else {
-                messageEl.textContent = response.message || 'เกิดข้อผิดพลาดในการลบเสียง';
-                messageEl.className = 'mt-3 text-sm text-red-700';
-            }
-        })
-        .withFailureHandler(function(error) {
-            messageEl.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
-            messageEl.className = 'mt-3 text-sm text-red-700';
-        })
-        .deleteSoundData(id);
+    showAppConfirmationDialog(
+        `คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลเสียง ID: ${id}? การกระทำนี้ไม่สามารถย้อนกลับได้`,
+        function() { // onConfirm
+            messageEl.textContent = `กำลังลบเสียง ID: ${id}...`;
+            messageEl.className = 'mt-3 text-sm text-blue-700';
+
+            google.script.run
+                .withSuccessHandler(function(response) {
+                    if (response.success) {
+                        showAppToastNotification(response.message || 'ลบข้อมูลเสียงสำเร็จ!', 'success');
+                        loadSoundData(); // Refresh table
+                    } else {
+                        showAppToastNotification(response.message || 'เกิดข้อผิดพลาดในการลบข้อมูลเสียง', 'error');
+                    }
+                    messageEl.textContent = ''; // Clear "Deleting..." message
+                })
+                .withFailureHandler(function(error) {
+                    showAppToastNotification('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, 'error');
+                    messageEl.textContent = ''; // Clear "Deleting..." message
+                })
+                .deleteSoundData(id);
+        },
+        function() { // onCancel
+            if (messageEl) messageEl.textContent = ''; // Clear any previous messages if cancelled
+        }
+    );
 }
 
 // Function to be called when settingsSection becomes visible
@@ -899,7 +1194,8 @@ function onShowSettingsSection() {
     console.log("Settings section shown, loading data...");
      initializeSettingsPageInteractions(); // Initialize or re-initialize interactions
     loadGeneralSettings();
-    loadSoundData();
+    loadSoundData(); // Make sure this function is defined and working
+    loadAdminSlideshowImages(); // Load slideshow images when settings are shown
     // Add loading for Announcement Settings tab if you create one
 }
 // Make sure onShowSettingsSection is called when the settings tab/section is actually made visible by your main navigation logic.
@@ -1035,5 +1331,3 @@ function saveSelectedTheme() {
 
 
 </script>
-
-

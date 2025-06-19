@@ -101,5 +101,67 @@ document.addEventListener('DOMContentLoaded', function() {
         .logout();
     });
   }
+
+  // --- Global Utility Functions ---
+window.showAppConfirmationDialog = function(message, onConfirm, onCancel, confirmButtonClass = "bg-red-600 hover:bg-red-700", confirmButtonText = "ยืนยัน") {
+    // Remove existing dialog if any
+    const existingDialog = document.getElementById("appConfirmationOverlay");
+    if (existingDialog) {
+      existingDialog.remove();
+    }
+
+    const overlay = document.createElement("div");
+    overlay.id = "appConfirmationOverlay";
+    overlay.className = "fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4"; // Increased z-index
+
+    const dialog = document.createElement("div");
+    dialog.className = "bg-white p-6 rounded-lg shadow-xl max-w-md w-full";
+
+    const messageP = document.createElement("p");
+    messageP.className = "text-gray-800 text-base mb-6";
+    messageP.textContent = message;
+
+    const buttonDiv = document.createElement("div");
+    buttonDiv.className = "flex justify-end gap-3";
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.className = `${confirmButtonClass} text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors`;
+    confirmBtn.textContent = confirmButtonText;
+    confirmBtn.onclick = () => {
+      if (onConfirm) onConfirm();
+      overlay.remove();
+    };
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg text-sm font-medium transition-colors";
+    cancelBtn.textContent = "ยกเลิก";
+    cancelBtn.onclick = () => {
+      if (onCancel) onCancel();
+      overlay.remove();
+    };
+
+    buttonDiv.appendChild(cancelBtn);
+    buttonDiv.appendChild(confirmBtn);
+    dialog.appendChild(messageP);
+    dialog.appendChild(buttonDiv);
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+  }
+console.log("js/main.html: window.showAppConfirmationDialog is now defined globally.", typeof window.showAppConfirmationDialog);
+
+window.showAppToastNotification = function(message, type = "info", duration = 3000) {
+    const notification = document.createElement("div");
+    let bgColor = "bg-blue-500"; // Default info
+    if (type === "success") bgColor = "bg-green-500";
+    if (type === "error") bgColor = "bg-red-500";
+    if (type === "warning") bgColor = "bg-yellow-500 text-black"; // Yellow often needs black text
+
+    notification.className = `fixed top-5 right-5 ${bgColor} text-white px-6 py-3 rounded-lg shadow-xl z-[105] transition-all duration-300 ease-out opacity-0 transform translate-x-full`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => { notification.classList.remove("opacity-0", "translate-x-full"); notification.classList.add("opacity-100", "translate-x-0"); }, 100); // Slide in and fade in
+    setTimeout(() => { notification.classList.remove("opacity-100", "translate-x-0"); notification.classList.add("opacity-0", "translate-x-full"); setTimeout(() => { if (document.body.contains(notification)) document.body.removeChild(notification); }, 350); }, duration); // Slide out and fade out
+  }
 });
 </script>
