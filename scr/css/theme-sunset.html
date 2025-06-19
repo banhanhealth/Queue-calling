@@ -1,0 +1,224 @@
+/* Sunset Theme (Moved from theme-standard.html) */
+:root {
+  /* ตัวแปรสีหลักของธีม */
+  --theme-bg-gradient-from: #ff7e5f; /* Coral */
+  --theme-bg-gradient-to: #feb47b;   /* Light Orange */
+  --theme-card-bg: rgba(255, 255, 255, 0.9);
+  --theme-card-backdrop-blur: blur(3px);
+  --theme-header-bg: #ff6347; /* Tomato */
+  --theme-header-backdrop-blur: blur(5px);
+  --theme-header-text-color: white;
+  --theme-footer-bg: rgba(50, 20, 10, 0.15); /* Dark brown, 15% transparent */
+  --theme-footer-backdrop-blur: blur(3px);
+  --theme-footer-text-color: #fceded;
+  --theme-button-primary-gradient-from: #ff5733; /* Strong Orange/Red */
+  --theme-button-primary-gradient-to: #ff4500;   /* OrangeRed */
+  --theme-button-primary-hover-gradient-from: #e04822;
+  --theme-button-primary-hover-gradient-to: #d13c00;
+  --theme-button-primary-text-color: white;
+  --theme-title-gradient-from: #c83f22; /* Darker sunset */
+  --theme-title-gradient-to: #e55d3b;
+  --theme-text-color-default: #4a2511; /* Dark brown for text on light cards */
+  --theme-text-color-on-gradient-cards: white;
+  --theme-text-muted-on-gradient-cards: #ffe0b2; /* Light orange/yellow for p tags */
+
+  /* Sunset Dashboard Card Variables (ensure these are defined) */
+  /* ตัวแปรสีเฉพาะสำหรับการ์ดบน Dashboard */
+  --theme-dashboard-card1-from: #ff8c69; /* Lighter coral */
+  --theme-dashboard-card1-to: #ffad87;   /* Lighter orange */
+  --theme-dashboard-card2-from: #ffb347; /* Apricot */
+  --theme-dashboard-card2-to: #ffcc33;   /* Sunglow */
+  --theme-dashboard-card3-from: #ff6f61; /* Living Coral */
+  --theme-dashboard-card3-to: #ff8e72;
+  --theme-dashboard-card4-from: #ffcc5c; /* Lighter Gold */
+  --theme-dashboard-card4-to: #ffae42;   /* Yellow Orange */
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.25);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.4);
+  --theme-dashboard-card-button-text-color: white;
+
+  /* ตัวแปรสีเฉพาะสำหรับหน้า Display Page */
+  --theme-interaction-overlay-bg: rgba(255, 127, 80, 0.85); /* Coral, semi-transparent */
+  --theme-interaction-overlay-text: white;
+  
+}
+
+/* สไตล์สำหรับ body ของธีมมาตรฐาน */
+body {
+  background-image: linear-gradient(to bottom right, var(--theme-bg-gradient-from), var(--theme-bg-gradient-to));
+  color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดทั่วไป เช่น การ์ด login, ส่วนการตั้งค่า */
+.theme-card {
+  background-color: var(--theme-card-bg);
+  backdrop-filter: var(--theme-card-backdrop-blur);
+}
+
+/* สไตล์สำหรับส่วนหัวของหน้า user-page, display-page */
+.theme-header {
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur);
+  color: var(--theme-header-text-color);
+}
+
+/* Specific styles for headers on the display page in sunset theme */
+.theme-display-header {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from, #ff5733), var(--theme-button-primary-gradient-to, #ff4500));
+  color: var(--theme-header-text-color, white); /* Ensures text color is white or as defined in theme */
+  box-shadow: 0 4px 6px -1px rgba(80, 30, 10, 0.1), 0 2px 4px -2px rgba(80, 30, 10, 0.08); /* Thematic shadow */
+  /* Padding and flex properties are handled by Tailwind classes in display-page.html */
+  /* No backdrop-filter needed here as the gradient is opaque */
+}
+
+/* สไตล์สำหรับส่วนท้ายของหน้า */
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur);
+  color: var(--theme-footer-text-color);
+}
+
+/* สไตล์สำหรับปุ่มหลัก */
+.theme-button-primary {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+}
+
+/* สไตล์สำหรับหัวข้อที่เป็น gradient */
+.theme-title-gradient {
+  background-image: linear-gradient(to right, var(--theme-title-gradient-from), var(--theme-title-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* สไตล์สำหรับข้อความทั่วไปบน .theme-card */
+.theme-text-default {
+    color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดที่ซ้อนอยู่ข้างใน */
+.theme-card-inset {
+  background-color: var(--theme-card-bg); /* Or a slightly different sunset shade */
+  backdrop-filter: var(--theme-card-backdrop-blur);
+}
+
+.theme-dashboard-card { /* สไตล์ทั่วไปสำหรับการ์ดบน Dashboard */
+    color: var(--theme-text-color-on-gradient-cards); /* สีข้อความบนการ์ด */
+    padding: 1.5rem; /* ระยะห่างภายใน */
+    border-radius: 0.75rem; /* ความโค้งมนของขอบ */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); /* เงา */
+    transition-property: all; /* กำหนด transition */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* รูปแบบ transition */
+    transition-duration: 150ms; /* ระยะเวลา transition */
+}
+.theme-dashboard-card:hover { /* สไตล์ hover สำหรับการ์ดบน Dashboard */
+    box-shadow: 0 20px 25px -5px rgba(80,30,10,0.2), 0 10px 10px -5px rgba(80,30,10,0.1);
+    transform: translateY(-0.25rem);
+}
+.theme-dashboard-card p {
+    color: var(--theme-text-muted-on-gradient-cards);
+    margin-bottom: 1rem;
+}
+.theme-dashboard-card h2 { /* สไตล์หัวข้อ H2 ในการ์ด Dashboard */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+.theme-dashboard-card-button { /* สไตล์ปุ่มภายในการ์ด Dashboard */
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    backdrop-filter: blur(2px);
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.3); /* Light border for buttons */
+    transition-property: background-color, color, box-shadow, transform, filter, -webkit-backdrop-filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+.theme-dashboard-card-button:hover { /* สไตล์ hover สำหรับปุ่มในการ์ด Dashboard */
+    background-color: var(--theme-dashboard-card-button-hover-bg);
+}
+/* สไตล์เฉพาะสำหรับการ์ด Dashboard แต่ละใบ (ไล่สีพื้นหลัง) */
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* สไตล์สำหรับการ์ดแสดงคิวปัจจุบันบน display-page */
+.theme-current-queue-card {
+  background-image: linear-gradient(to bottom right, var(--theme-button-primary-gradient-from, #ff5733), var(--theme-button-primary-gradient-to, #ff4500));
+  color: var(--theme-text-color-on-gradient-cards, white);
+  /* Tailwind CSS classes like p-8, rounded-2xl, shadow-2xl, text-center are already applied in the HTML structure */
+  /* This ensures the text inside (like currentQueue and currentService) will be white or the specified theme color for text on gradients. */
+}
+
+
+/* Styles for specific display-page elements using their dedicated variables */
+.theme-interaction-overlay {
+  /* สไตล์สำหรับ Overlay เริ่มต้นการแสดงผล - ใช้สีพื้นหลังโปร่งแสง */
+  background-color: var(--theme-interaction-overlay-bg);
+  color: var(--theme-interaction-overlay-text);
+}
+
+.theme-panel-left {
+  /* สไตล์สำหรับแผงด้านซ้าย (วิดีโอ/สไลด์) บน display-page */
+  background-color: var(--theme-panel-left-bg);
+  backdrop-filter: var(--theme-panel-left-backdrop-blur);
+}
+
+.theme-panel-right {
+  /* สไตล์สำหรับแผงด้านขวา (รายการคิว) บน display-page */
+  background-color: var(--theme-panel-right-bg);
+  /* backdrop-filter: var(--theme-panel-right-backdrop-blur); /* White bg makes blur ineffective */
+}
+
+/* สไตล์สำหรับข้อความ "กำลังเรียกคิว" */
+.theme-current-queue-indicator-text {
+  color: var(--theme-current-queue-indicator-text);
+  animation: blink-text-color 1.5s infinite; /* Apply blinking animation */
+}
+
+/* สไตล์สำหรับพื้นหลังไอคอนกระดิ่ง */
+.theme-current-queue-indicator-bell-bg {
+  background-color: var(--theme-current-queue-indicator-bell-bg);
+}
+/* สไตล์สำหรับไอคอนกระดิ่ง */
+.theme-current-queue-indicator-bell-icon {
+  color: var(--theme-current-queue-indicator-bell-icon);
+}
+
+/* สไตล์สำหรับคอนเทนเนอร์รายการคิวรอเรียก */
+.theme-waiting-list-container {
+  background-color: var(--theme-waiting-list-bg);
+  /* padding: 1rem; */ /* Removed padding */
+  /* border-radius: 0.5rem; */ /* Removed border-radius */
+}
+
+/* สไตล์สำหรับรายการคิวที่ถูกข้าม */
+.theme-alert-skipped {
+ background-color: var(--theme-alert-skipped-bg);
+   color: var(--theme-alert-skipped-text);
+   border-color: var(--theme-alert-skipped-border);
+}
+
+/* Overrides for user-page elements in sunset theme */
+/* ทำให้ข้อความ "จองคิวสำเร็จ!" บนหน้า user-page เป็นสีเขียวที่เข้ากับธีม */
+#reserveQueue.theme-title-gradient {
+  background-image: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: #2f855A; /* Darker, slightly desaturated green */
+}
+/* ทำให้ข้อความ "หมายเลขคิวของคุณคือ" บนหน้า user-page เป็นสีน้ำเงินที่เข้ากับธีม */
+#queueResult .theme-card-inset > p.theme-text-default:first-child {
+  color: #2c5282; /* Darker, slightly desaturated blue */
+}
+/* หมายเลขคิวบนหน้า user-page ให้ยังคงใช้ gradient ของธีม sunset */
+/* No specific override for #queueNumber needed if default theme-title-gradient is desired */
+
+
+</style>

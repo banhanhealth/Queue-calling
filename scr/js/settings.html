@@ -112,6 +112,17 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // console.error("Settings script: saveGeneralSettingsBtn NOT FOUND.");
     }
+
+    // ใน js/settings.js - ภายในส่วนที่ตั้งค่า Event Listeners
+    const saveThemeButton = document.getElementById('saveThemeSettingsBtn');
+    if (saveThemeButton) {
+        // ลบ Event Listener เก่า (ถ้ามี) หรือแก้ไข Listener เดิม
+        // Event listener for saveSelectedTheme will be correctly attached.
+        saveThemeButton.addEventListener('click', saveSelectedTheme);
+    } else {
+        console.error("ไม่พบปุ่ม 'saveThemeSettingsBtn'");
+    }
+    
     
     // Display settings event listeners
     const displayTypeVideo = document.getElementById('displayTypeVideo');
@@ -146,12 +157,35 @@ document.addEventListener('DOMContentLoaded', function() {
         // console.error("Settings script: cancelEditSoundBtn NOT FOUND (modal button).");
     }
 
+    // Google Drive Sound Guide Modal
+    const openGoogleDriveGuideBtn = document.getElementById('openGoogleDriveSoundGuideBtn');
+    const closeGoogleDriveGuideBtn = document.getElementById('closeGoogleDriveSoundGuideBtn');
+    const googleDriveSoundGuideModal = document.getElementById('googleDriveSoundGuideModal');
+
+    if (openGoogleDriveGuideBtn && closeGoogleDriveGuideBtn && googleDriveSoundGuideModal) {
+        openGoogleDriveGuideBtn.addEventListener('click', () => {
+            googleDriveSoundGuideModal.classList.remove('hidden');
+        });
+        closeGoogleDriveGuideBtn.addEventListener('click', () => {
+            googleDriveSoundGuideModal.classList.add('hidden');
+        });
+        // Close modal if clicking outside of it
+        googleDriveSoundGuideModal.addEventListener('click', (event) => {
+            if (event.target === googleDriveSoundGuideModal) {
+                googleDriveSoundGuideModal.classList.add('hidden');
+            }
+        });
+    } else {
+        console.warn("Settings script: Google Drive sound guide modal elements not all found.");
+    }
+
     const saveAnnouncementSettingsBtn = document.getElementById('saveAnnouncementSettingsBtn');
     if (saveAnnouncementSettingsBtn) {
         saveAnnouncementSettingsBtn.addEventListener('click', handleSaveAnnouncementSettings);
     } else {
         console.error("Settings script: saveAnnouncementSettingsBtn NOT FOUND.");
     }
+
     
     // Queue Ticket Settings event listeners
     const saveQueueTicketSettingsBtn = document.getElementById('saveQueueTicketSettingsBtn');
@@ -213,6 +247,7 @@ function loadGeneralSettings() {
     const messageEl = document.getElementById('generalSettingsMessage');
     if (!messageEl) { console.error("loadGeneralSettings: messageEl not found"); return; }
     
+    let currentSettings = {}; // To store settings for later use, like setting ActiveSoundSet
     messageEl.textContent = 'กำลังโหลดการตั้งค่าทั่วไป...';
     messageEl.className = 'mt-3 text-sm text-blue-700';
 
@@ -220,14 +255,21 @@ function loadGeneralSettings() {
         .withSuccessHandler(function(settings) {
             if (settings) {
                 const orgNameInput = document.getElementById('orgNameInput');
-                const soundUrlInput = document.getElementById('soundUrlInput');
+                const activeSoundSetSelect = document.getElementById('activeSoundSetInput');
+                // const soundUrlInput = document.getElementById('soundUrlInput'); // Removed as it's not in General Settings tab
                 // New announcement settings fields
                 const announcementPatternInput = document.getElementById('announcementPatternInput');
+                // Sound Generation Method Radio Buttons
+                const soundMethodUrlRadio = document.getElementById('soundMethodUrl');
+                const soundMethodWebSpeechRadio = document.getElementById('soundMethodWebSpeech');
+                const soundMethodGoogleTTSRadio = document.getElementById('soundMethodGoogleTTS');
                 const counterAnnounceNumberRadio = document.getElementById('counterAnnounceNumber');
                 const counterAnnounceNameSoundRadio = document.getElementById('counterAnnounceNameSound');
 
+                currentSettings = settings; // Store settings
                 if(orgNameInput) orgNameInput.value = settings.OrganizationName || ''; else console.error("loadGeneralSettings: orgNameInput not found");
-                if(soundUrlInput) soundUrlInput.value = settings.SoundURL || ''; else console.error("loadGeneralSettings: soundUrlInput not found");
+                // ActiveSoundSet will be set after its options are loaded
+                // if(soundUrlInput) soundUrlInput.value = settings.SoundURL || ''; else console.error("loadGeneralSettings: soundUrlInput not found"); // Removed
                 
                 // Populate announcement settings
                 if(announcementPatternInput) announcementPatternInput.value = settings.default_announcement_pattern || ''; else console.error("loadGeneralSettings: announcementPatternInput not found");
@@ -238,6 +280,20 @@ function loadGeneralSettings() {
                         counterAnnounceNumberRadio.checked = true; // Default to number
                     }
                 } else { console.error("loadGeneralSettings: Counter announcement radio buttons not found"); }
+
+                // Populate Sound Generation Method
+                if (soundMethodUrlRadio && soundMethodWebSpeechRadio && soundMethodGoogleTTSRadio) {
+                    switch (settings.SoundGenerationMethod) {
+                        case 'web_speech':
+                            soundMethodWebSpeechRadio.checked = true;
+                            break;
+                        case 'google_cloud_tts':
+                            soundMethodGoogleTTSRadio.checked = true;
+                            break;
+                        default: // 'url' or undefined
+                            soundMethodUrlRadio.checked = true;
+                    }
+                } else { console.error("loadGeneralSettings: Sound Generation Method radio buttons not found"); }
 
                 // Also load display settings
                 loadDisplaySettings(settings);
@@ -256,9 +312,41 @@ function loadGeneralSettings() {
                 if(ticketWidthInput) ticketWidthInput.value = settings.TicketWidth || '80'; else console.error("loadGeneralSettings: ticketWidthInput not found");
                 if(ticketHeightInput) ticketHeightInput.value = settings.TicketHeight || '150'; else console.error("loadGeneralSettings: ticketHeightInput not found");
 
+                loadThemeSettings(settings); // <<<< ADD THIS LINE
+                
                 messageEl.textContent = 'โหลดการตั้งค่าทั่วไปสำเร็จ';
                 setTimeout(() => { messageEl.textContent = ''; }, 3000);
             } else {
+                messageEl.textContent = 'ไม่พบข้อมูลการตั้งค่า';
+                messageEl.className = 'mt-3 text-sm text-yellow-700';
+            }
+
+            // Now load available sound sets and set the active one
+            google.script.run.withSuccessHandler(function(soundSetResponse) {
+                const activeSoundSetSelect = document.getElementById('activeSoundSetInput');
+                if (activeSoundSetSelect) {
+                    if (soundSetResponse.success && soundSetResponse.data) {
+                        activeSoundSetSelect.innerHTML = '<option value="">-- เลือกชุดเสียง --</option>'; // Clear existing
+                        soundSetResponse.data.forEach(set => {
+                            const option = document.createElement('option');
+                            option.value = set;
+                            option.textContent = set;
+                            activeSoundSetSelect.appendChild(option);
+                        });
+                        // Set the current active sound set from previously loaded settings
+                        if (currentSettings.ActiveSoundSet) {
+                            activeSoundSetSelect.value = currentSettings.ActiveSoundSet;
+                        }
+                    } else {
+                        activeSoundSetSelect.innerHTML = '<option value="">ไม่สามารถโหลดชุดเสียง</option>';
+                        console.error("Failed to load sound sets:", soundSetResponse.message);
+                    }
+                }
+            }).withFailureHandler(showError).getAvailableSoundSets();
+
+        })
+        .withFailureHandler(function(error) {
+            if(messageEl) {
                 messageEl.textContent = 'ไม่พบข้อมูลการตั้งค่า';
                 messageEl.className = 'mt-3 text-sm text-yellow-700';
             }
@@ -406,22 +494,28 @@ function handleSaveGeneralSettings() {
     const messageEl = document.getElementById('generalSettingsMessage');
     if (!messageEl) { console.error("handleSaveGeneralSettings: messageEl not found"); return; }
     
+    const activeSoundSetInput = document.getElementById('activeSoundSetInput'); // Get the select element
     const orgNameInput = document.getElementById('orgNameInput');
-    const soundUrlInput = document.getElementById('soundUrlInput');
+    // Removed checks for soundUrlInput and Sound Generation Method radios
+    // as they are not in the General Settings tab and should be saved elsewhere.
 
-    if (!orgNameInput || !soundUrlInput) {
+    // Check only for elements expected in the General Settings tab
+
+
+    if (!orgNameInput || !activeSoundSetInput /* Removed soundUrlInput and soundMethod radios from this check */) {
         messageEl.textContent = 'เกิดข้อผิดพลาด: ไม่พบช่องข้อมูลบางช่อง';
         messageEl.className = 'mt-3 text-sm text-red-700';
-        console.error("handleSaveGeneralSettings: One or more input fields not found.");
+        console.error("handleSaveGeneralSettings: One or more input fields (org, soundURL, soundMethod radios) not found.");
         return;
     }
-    
+
     messageEl.textContent = 'กำลังบันทึกการตั้งค่า...';
     messageEl.className = 'mt-3 text-sm text-blue-700';
 
     const settingsToUpdate = {
         OrganizationName: orgNameInput.value.trim(),
-        SoundURL: soundUrlInput.value.trim()
+        // Removed SoundURL and SoundGenerationMethod from here
+        ActiveSoundSet: activeSoundSetInput ? activeSoundSetInput.value : (currentSettings.ActiveSoundSet || 'madamdear') // Save ActiveSoundSet
     };
     google.script.run
         .withSuccessHandler(function(response) {
@@ -493,20 +587,30 @@ function handleSaveAnnouncementSettings() {
 
     const patternInput = document.getElementById('announcementPatternInput');
     const announceNumberRadio = document.getElementById('counterAnnounceNumber');
+    // Get Sound Generation Method Radio Buttons (These are correctly located in this tab)
+    const soundMethodUrlRadio = document.getElementById('soundMethodUrl');
+    const soundMethodWebSpeechRadio = document.getElementById('soundMethodWebSpeech');
+    const soundMethodGoogleTTSRadio = document.getElementById('soundMethodGoogleTTS');
 
-    if (!patternInput || !announceNumberRadio ) { // announceNameSoundRadio will exist if announceNumberRadio does
-        messageEl.textContent = 'เกิดข้อผิดพลาด: ไม่พบองค์ประกอบฟอร์มบางส่วน';
+    if (!patternInput || !announceNumberRadio || !soundMethodUrlRadio || !soundMethodWebSpeechRadio || !soundMethodGoogleTTSRadio) {
+        messageEl.textContent = 'เกิดข้อผิดพลาด: ไม่พบองค์ประกอบฟอร์มบางส่วน (pattern, counter announce, sound method radios)';
         messageEl.className = 'mt-3 text-sm text-red-700';
         console.error("handleSaveAnnouncementSettings: One or more form elements not found.");
         return;
     }
+
+    // Determine selected SoundGenerationMethod
+    let selectedSoundMethod = 'url'; // Default
+    if (soundMethodWebSpeechRadio.checked) selectedSoundMethod = 'web_speech';
+    else if (soundMethodGoogleTTSRadio.checked) selectedSoundMethod = 'google_cloud_tts';
 
     messageEl.textContent = 'กำลังบันทึกการตั้งค่ารูปแบบเสียง...';
     messageEl.className = 'mt-3 text-sm text-blue-700';
 
     const settingsToUpdate = {
         default_announcement_pattern: patternInput.value.trim(),
-        counter_announcement_type: announceNumberRadio.checked ? 'number' : 'name_sound'
+        counter_announcement_type: announceNumberRadio.checked ? 'number' : 'name_sound',
+        SoundGenerationMethod: selectedSoundMethod // Add SoundGenerationMethod here
     };
 
     google.script.run
@@ -582,12 +686,13 @@ function loadSoundData() {
     tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">กำลังโหลดข้อมูลเสียง...</td></tr>'; // Adjusted colspan for 6 columns
     if(messageEl) messageEl.textContent = '';
 
+    const colspanForSoundTable = 7; // ID, Name, Link, Desc, Type, Set, Actions
     google.script.run
         .withSuccessHandler(function(response) {
             if (response.success && response.data) {
                 tableBody.innerHTML = ''; 
                 if (response.data.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">ไม่พบข้อมูลเสียง</td></tr>'; // Adjusted colspan
+                    tableBody.innerHTML = `<tr><td colspan="${colspanForSoundTable}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">ไม่พบข้อมูลเสียง</td></tr>`;
                 } else {
                     response.data.forEach(sound => {
                         const row = tableBody.insertRow();
@@ -598,8 +703,9 @@ function loadSoundData() {
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs" title="${sound.linkSound}">${sound.linkSound}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sound.description || ''}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sound.soundType || ''}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sound.soundSet || 'default'}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button onclick="openEditSoundModal('${sound.id}', '${escapeJsString(sound.nameSound)}', '${escapeJsString(sound.linkSound)}', '${escapeJsString(sound.description)}', '${escapeJsString(sound.soundType)}')" class="text-indigo-600 hover:text-indigo-900 mr-2">แก้ไข</button>
+                                <button onclick="openEditSoundModal('${sound.id}', '${escapeJsString(sound.nameSound)}', '${escapeJsString(sound.linkSound)}', '${escapeJsString(sound.description)}', '${escapeJsString(sound.soundType)}', '${escapeJsString(sound.soundSet)}')" class="text-indigo-600 hover:text-indigo-900 mr-2">แก้ไข</button>
                                 <button onclick="handleDeleteSound('${sound.id}')" class="text-red-600 hover:text-red-900">ลบ</button>
                             </td>
                         `;
@@ -607,7 +713,7 @@ function loadSoundData() {
                 }
                 if(messageEl) messageEl.textContent = 'โหลดข้อมูลเสียงสำเร็จ';
             } else {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-red-500 text-center">เกิดข้อผิดพลาด: ' + (response.message || 'ไม่สามารถโหลดข้อมูลเสียง') + '</td></tr>'; // Adjusted colspan
+                tableBody.innerHTML = `<tr><td colspan="${colspanForSoundTable}" class="px-6 py-4 whitespace-nowrap text-sm text-red-500 text-center">เกิดข้อผิดพลาด: ${response.message || 'ไม่สามารถโหลดข้อมูลเสียง'}</td></tr>`;
                 if(messageEl) {
                     messageEl.textContent = response.message || 'ไม่สามารถโหลดข้อมูลเสียง';
                     messageEl.className = 'mt-3 text-sm text-red-700';
@@ -616,7 +722,7 @@ function loadSoundData() {
              if(messageEl) setTimeout(() => { messageEl.textContent = ''; }, 3000);
         })
         .withFailureHandler(function(error) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-red-500 text-center">Error: ' + error.message + '</td></tr>'; // Adjusted colspan
+            tableBody.innerHTML = `<tr><td colspan="${colspanForSoundTable}" class="px-6 py-4 whitespace-nowrap text-sm text-red-500 text-center">Error: ${error.message}</td></tr>`;
             if(messageEl) {
                 messageEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูลเสียง: ' + error.message;
                 messageEl.className = 'mt-3 text-sm text-red-700';
@@ -635,10 +741,11 @@ function handleAddSound() {
     const linkInput = document.getElementById('newSoundLink');
     const descriptionInput = document.getElementById('newSoundDescription'); // Assuming you add this input
     const typeInput = document.getElementById('newSoundType');       // Assuming you add this select/input
+    const soundSetInput = document.getElementById('newSoundSet'); // Added for Sound Set
     const messageEl = document.getElementById('addSoundMessage');
 
-    if (!nameInput || !linkInput || !descriptionInput || !typeInput || !messageEl) {
-        console.error("handleAddSound: One or more form elements not found.");
+    if (!nameInput || !linkInput || !descriptionInput || !typeInput || !soundSetInput || !messageEl) {
+        console.error("handleAddSound: One or more form elements not found (name, link, desc, type, set, messageEl).");
         if(messageEl) messageEl.textContent = 'เกิดข้อผิดพลาด: ไม่พบองค์ประกอบฟอร์ม';
         return;
     }
@@ -647,8 +754,9 @@ function handleAddSound() {
     const linkSound = linkInput.value.trim();
     const description = descriptionInput.value.trim();
     const soundType = typeInput.value.trim();
+    const soundSet = soundSetInput.value.trim() || 'default'; // Default if empty
 
-    if (!nameSound || !linkSound) { // Basic validation, consider adding for description/type if mandatory
+    if (!nameSound || !linkSound || !soundType) { // Basic validation, soundType is also important
         messageEl.textContent = 'กรุณากรอกชื่อเสียงและลิงก์เสียง';
         messageEl.className = 'mt-2 text-sm text-red-700';
         return;
@@ -666,6 +774,7 @@ function handleAddSound() {
                 linkInput.value = '';
                 descriptionInput.value = '';
                 typeInput.value = 'general_purpose'; // Reset to default
+                soundSetInput.value = ''; // Reset sound set input
                 loadSoundData(); 
             } else {
                 messageEl.textContent = response.message || 'เกิดข้อผิดพลาดในการเพิ่มเสียง';
@@ -676,29 +785,31 @@ function handleAddSound() {
             messageEl.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
             messageEl.className = 'mt-2 text-sm text-red-700';
         })
-        .addSoundData(nameSound, linkSound, description, soundType); // Pass new fields
+        .addSoundData(nameSound, linkSound, description, soundType, soundSet); // Pass soundSet
 }
 
-function openEditSoundModal(id, name, link, description, soundType) {
+function openEditSoundModal(id, name, link, description, soundType, soundSet) { // Added soundSet
     const editSoundId = document.getElementById('editSoundId');
     const editSoundNameInput = document.getElementById('editSoundNameInput');
     const editSoundLinkInput = document.getElementById('editSoundLinkInput');
     const editSoundDescriptionInput = document.getElementById('editSoundDescriptionInput'); // Assuming you add this
     const editSoundTypeInput = document.getElementById('editSoundTypeInput');       // Assuming you add this
+    const editSoundSetInput = document.getElementById('editSoundSetInput'); // Added for Sound Set
     const editSoundModalMessage = document.getElementById('editSoundModalMessage');
     const editSoundModal = document.getElementById('editSoundModal');
 
-    if (!editSoundId || !editSoundNameInput || !editSoundLinkInput || !editSoundDescriptionInput || !editSoundTypeInput || !editSoundModalMessage || !editSoundModal) {
-        console.error("openEditSoundModal: One or more modal elements not found.");
+    if (!editSoundId || !editSoundNameInput || !editSoundLinkInput || !editSoundDescriptionInput || !editSoundTypeInput || !editSoundSetInput || !editSoundModalMessage || !editSoundModal) {
+        console.error("openEditSoundModal: One or more modal elements not found (id, name, link, desc, type, set, message, modal).");
         alert("Error opening edit modal.");
         return;
     }
 
     editSoundId.value = id;
-    editSoundNameInput.value = name;
-    editSoundLinkInput.value = link;
-    editSoundDescriptionInput.value = description || '';
-    editSoundTypeInput.value = soundType || 'general_purpose';
+    editSoundNameInput.value = name || '';
+    editSoundLinkInput.value = link || '';
+    editSoundDescriptionInput.value = description || ''; // Default to empty string if null/undefined
+    editSoundTypeInput.value = soundType || 'general_purpose'; // Default if null/undefined
+    editSoundSetInput.value = soundSet || 'default'; // Default if null/undefined
     editSoundModalMessage.textContent = '';
     editSoundModal.classList.remove('hidden');
 }
@@ -709,12 +820,13 @@ function handleSaveEditSound() {
     const linkInput = document.getElementById('editSoundLinkInput');
     const descriptionInput = document.getElementById('editSoundDescriptionInput'); // Assuming you add this
     const typeInput = document.getElementById('editSoundTypeInput');       // Assuming you add this
+    const soundSetInput = document.getElementById('editSoundSetInput'); // Added for Sound Set
     const messageEl = document.getElementById('editSoundModalMessage');
     const editModal = document.getElementById('editSoundModal');
 
 
-    if (!nameInput || !linkInput || !descriptionInput || !typeInput || !messageEl || !editModal) {
-        console.error("handleSaveEditSound: One or more modal form elements not found.");
+    if (!nameInput || !linkInput || !descriptionInput || !typeInput || !soundSetInput || !messageEl || !editModal) {
+        console.error("handleSaveEditSound: One or more modal form elements not found (name, link, desc, type, set, message, modal).");
         if(messageEl) messageEl.textContent = 'เกิดข้อผิดพลาด: ไม่พบองค์ประกอบฟอร์มโมดัล';
         return;
     }
@@ -723,8 +835,9 @@ function handleSaveEditSound() {
     const linkSound = linkInput.value.trim();
     const description = descriptionInput.value.trim();
     const soundType = typeInput.value.trim();
+    const soundSet = soundSetInput.value.trim() || 'default'; // Default if empty
 
-    if (!nameSound || !linkSound) { // Basic validation
+    if (!nameSound || !linkSound || !soundType) { // Basic validation, soundType is also important
         messageEl.textContent = 'กรุณากรอกชื่อเสียงและลิงก์เสียง';
         messageEl.className = 'px-6 py-2 text-sm text-red-700';
         return;
@@ -751,7 +864,7 @@ function handleSaveEditSound() {
             messageEl.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
             messageEl.className = 'px-6 py-2 text-sm text-red-700';
         })
-        .updateSoundData(id, nameSound, linkSound, description, soundType); // Pass new fields
+        .updateSoundData(id, nameSound, linkSound, description, soundType, soundSet); // Pass soundSet
 }
 
 function handleDeleteSound(id) {
@@ -792,6 +905,135 @@ function onShowSettingsSection() {
 // Make sure onShowSettingsSection is called when the settings tab/section is actually made visible by your main navigation logic.
 // d:\Github\Queue-augment\js\settings.js
 
+// --- Theme Settings ---
+    function loadThemeSettings(settings) {
+       // ให้แทนที่โค้ดเดิมที่พยายามตั้งค่า radio button ของ theme ด้วยบรรทัดนี้:
+if (settings.ActiveTheme) {
+    populateActiveThemeDropdown(settings.ActiveTheme);
+} else {
+    populateActiveThemeDropdown('standard'); // ถ้าไม่มีค่า ActiveTheme ให้ใช้ standard
+}
+    }
+
+    function saveThemeSettings() {
+        const selectedTheme = document.querySelector('input[name="active_theme_option"]:checked');
+        const messageDiv = document.getElementById('themeSettingsMessage');
+        messageDiv.textContent = 'กำลังบันทึก...';
+
+        if (selectedTheme) {
+            const settingsToUpdate = {
+                'ActiveTheme': selectedTheme.value
+            };
+            google.script.run
+                .withSuccessHandler(response => {
+                    if (response.success) {
+                        messageDiv.textContent = 'บันทึกธีมสำเร็จ! กรุณารีเฟรชหน้าเพื่อดูการเปลี่ยนแปลง';
+                        messageDiv.className = 'mt-3 text-sm text-green-600';
+                        // Optionally, you can try to dynamically change the theme without a full reload,
+                        // but a reload is simpler and more reliable with Apps Script HTML Service.
+                        // For immediate effect, you might need to reload the page:
+                        // showToast('บันทึกธีมสำเร็จ! จะรีเฟรชหน้าใน 3 วินาที...');
+                        // setTimeout(() => window.top.location.reload(), 3000);
+                    } else {
+                        messageDiv.textContent = 'เกิดข้อผิดพลาด: ' + response.message;
+                        messageDiv.className = 'mt-3 text-sm text-red-600';
+                    }
+                })
+                .withFailureHandler(error => { // Changed from showError to a local handler or a defined global one
+                    messageDiv.textContent = 'เกิดข้อผิดพลาดในการติดต่อเซิร์ฟเวอร์: ' + error.message;
+                    messageDiv.className = 'mt-3 text-sm text-red-600';
+                    console.error("saveThemeSettings failure:", error); // Log the error
+                })
+                .updateMultipleSettings(settingsToUpdate);
+        } else {
+            messageDiv.textContent = 'กรุณาเลือกธีม';
+            messageDiv.className = 'mt-3 text-sm text-red-600';
+        }
+    }
+
+
+// Generic error handler function (can be moved to a global script if used elsewhere)
+function showError(error) {
+    console.error("Script error:", error);
+    // You can display this error in a more user-friendly way, e.g., in a dedicated error div or using a toast notification.
+    // For now, just logging it. If a specific message div is relevant, update it.
+    const generalMessageEl = document.getElementById('generalSettingsMessage') || // Try general settings message
+                             document.getElementById('soundTableMessage') ||      // Or sound table message
+                             document.getElementById('themeSettingsMessage');     // Or theme settings message
+    if (generalMessageEl) {
+        generalMessageEl.textContent = 'เกิดข้อผิดพลาด: ' + (error.message || JSON.stringify(error));
+        generalMessageEl.className = 'mt-3 text-sm text-red-700';
+    } else {
+        alert('เกิดข้อผิดพลาด: ' + (error.message || JSON.stringify(error)));
+    }
+}
+
+// เพิ่มฟังก์ชันนี้ใน js/settings.js
+function populateActiveThemeDropdown(activeThemeValue) {
+    const themeSelect = document.getElementById('activeThemeSelect');
+    if (themeSelect) {
+        themeSelect.value = activeThemeValue || 'standard'; // กำหนดค่าเริ่มต้นเป็น 'standard' หากไม่มีค่า
+    } else {
+        console.error("ไม่พบ Element 'activeThemeSelect' สำหรับการโหลดธีม");
+    }
+}
+
+// เพิ่มฟังก์ชันนี้ใน js/settings.js
+function saveSelectedTheme() {
+    const themeMsgDiv = document.getElementById('themeSettingsMessage');
+    const activeThemeSelect = document.getElementById('activeThemeSelect');
+
+    if (!activeThemeSelect) {
+        console.error("ไม่พบ Element 'activeThemeSelect' สำหรับการบันทึกธีม");
+        if (themeMsgDiv) {
+            themeMsgDiv.textContent = 'เกิดข้อผิดพลาด: ไม่พบ dropdown เลือกธีม';
+            themeMsgDiv.className = 'text-red-500 text-sm mt-3';
+        }
+        return;
+    }
+    const selectedThemeValue = activeThemeSelect.value;
+
+    // ตรวจสอบว่ามีการเลือกค่าหรือไม่ (เผื่อกรณีมี option แรกเป็นค่าว่าง)
+    if (!selectedThemeValue || selectedThemeValue === "") {
+        if (themeMsgDiv) {
+            themeMsgDiv.textContent = 'กรุณาเลือกธีมที่ต้องการ';
+            themeMsgDiv.className = 'text-red-500 text-sm mt-3';
+        }
+        return;
+    }
+
+    if (themeMsgDiv) {
+        themeMsgDiv.textContent = 'กำลังบันทึกธีม...';
+        themeMsgDiv.className = 'text-blue-500 text-sm mt-3';
+    }
+
+    google.script.run
+        .withSuccessHandler(function(response) {
+            if (themeMsgDiv) {
+                if (response.success) {
+                    themeMsgDiv.textContent = 'บันทึกธีมสำเร็จ!';
+                    themeMsgDiv.className = 'text-green-500 text-sm mt-3';
+                    // (Optional) หากต้องการให้ธีมเปลี่ยนทันทีโดยไม่ต้องรีเฟรชหน้า
+                    // อาจจะต้องมีฟังก์ชัน global สำหรับโหลด CSS ของธีมใหม่
+                    if (typeof window.loadAndApplyTheme === 'function') {
+                        window.loadAndApplyTheme(selectedThemeValue);
+                    }
+                } else {
+                    themeMsgDiv.textContent = 'เกิดข้อผิดพลาดในการบันทึกธีม: ' + (response.message || 'Unknown error');
+                    themeMsgDiv.className = 'text-red-500 text-sm mt-3';
+                }
+            }
+        })
+        .withFailureHandler(function(error) {
+            if (themeMsgDiv) {
+                themeMsgDiv.textContent = 'เกิดข้อผิดพลาดในการสื่อสารกับเซิร์ฟเวอร์: ' + error.message;
+                themeMsgDiv.className = 'text-red-500 text-sm mt-3';
+            }
+        })
+        .updateMultipleSettings({ 'ActiveTheme': selectedThemeValue });
+}
 
 
 </script>
+
+

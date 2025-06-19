@@ -1,4 +1,4 @@
-<!-- d:\Github\Queue-augment\settings.html -->
+
 <div class="w-full">
     <!-- Tab Buttons -->
     <div class="mb-4 border-b border-gray-200">
@@ -31,6 +31,11 @@
             <li class="mr-2" role="presentation">
                 <button class="settings-tab-button inline-block p-4 border-b-2 rounded-t-lg" id="queue-ticket-settings-tab" data-tabs-target="#queueTicketSettingsContent" type="button" role="tab" aria-controls="queueTicketSettingsContent" aria-selected="false">
                     6. ตั้งค่าบัตรคิว
+                </button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button class="settings-tab-button inline-block p-4 border-b-2 rounded-t-lg" id="theme-settings-tab" data-tabs-target="#themeSettingsContent" type="button" role="tab" aria-controls="themeSettingsContent" aria-selected="false">
+                    7. ตั้งค่าธีม
                 </button>
             </li>
         </ul>
@@ -66,8 +71,14 @@
                             <input type="text" id="orgNameInput" name="OrganizationName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </div>
                         <div>
-                            <label for="soundUrlInput" class="block text-sm font-medium text-gray-700">Sound URL (เสียงแจ้งเตือนทั่วไป ถ้ามี):</label>
-                            <input type="url" id="soundUrlInput" name="SoundURL" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., https://example.com/notification.mp3">
+                            <label for="activeSoundSetInput" class="block text-sm font-medium text-gray-700">ชุดเสียงที่ใช้งาน (Active Sound Set):</label>
+                            <select id="activeSoundSetInput" name="ActiveSoundSet" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <!-- Options will be populated by JavaScript -->
+                                <option value="">กำลังโหลดชุดเสียง...</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500">
+                                เลือกชุดเสียงที่ต้องการใช้สำหรับเสียงประกาศต่างๆ (ตัวเลข, เสียงเชิญ, ฯลฯ) ชุดเสียงถูกกำหนดในชีท "Sound" คอลัมน์ "SoundSet"
+                            </p>
                         </div>
                         <button id="saveGeneralSettingsBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                             บันทึกการตั้งค่าทั่วไป
@@ -155,7 +166,7 @@
         <!-- Sound Management Content -->
         <div class="settings-tab-pane hidden" id="soundManagementContent" role="tabpanel" aria-labelledby="sound-management-tab">
             <div class="bg-green-50 p-6 rounded-lg shadow">
-                <h3 class="text-lg font-semibold text-green-700 mb-3">3. จัดการเสียงเรียกคิว (Sound Management)</h3>
+                <h3 class="text-lg font-semibold text-green-700 mb-3">4. จัดการเสียงเรียกคิว (Sound Management)</h3>
                 <p class="text-sm text-green-600 mb-4">
                     เพิ่ม ลบ หรือแก้ไขไฟล์เสียงที่ใช้ในการประกาศเรียกคิว (ID, ชื่อเสียง, ลิงก์เสียง)
                 </p>
@@ -163,7 +174,7 @@
                     <!-- Add New Sound Form -->
                     <div class="mb-6 p-4 border border-green-200 rounded-md">
                         <h4 class="text-md font-semibold text-green-600 mb-3">เพิ่มเสียงใหม่</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                             <div>
                                 <label for="newSoundName" class="block text-sm font-medium text-gray-700">ชื่อเสียง (เช่น เสียงเลข 1, เสียงเชิญหมายเลข):</label>
                                 <input type="text" id="newSoundName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
@@ -183,8 +194,12 @@
                                     <option value="digit_0">เลข 0</option><option value="digit_1">เลข 1</option><option value="digit_2">เลข 2</option><option value="digit_3">เลข 3</option><option value="digit_4">เลข 4</option><option value="digit_5">เลข 5</option><option value="digit_6">เลข 6</option><option value="digit_7">เลข 7</option><option value="digit_8">เลข 8</option><option value="digit_9">เลข 9</option>
                                     <option value="start_call">เสียงเริ่มเรียก (start_call)</option>
                                     <option value="end_call">เสียงจบการเรียก (end_call)</option>
-                                    <option value="counter_prefix">เสียงนำหน้าช่อง (counter_prefix)</option>
+                                    <option value="counter_prefix">เสียงนำหน้าช่อง (counter_prefix)</option>                                    
                                 </select>
+                            </div>
+                            <div>
+                                <label for="newSoundSet" class="block text-sm font-medium text-gray-700">ชุดเสียง (Sound Set):</label>
+                                <input type="text" id="newSoundSet" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="e.g., madamdear, male_voice">
                             </div>
                             <button id="addSoundBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded h-fit">
                                 เพิ่มเสียง
@@ -192,6 +207,68 @@
                         </div>
                         <div id="addSoundMessage" class="mt-2 text-sm"></div>
                     </div>
+                    
+                    <!-- Google Drive Sound Guide Button -->
+                        <div class="mt-6 mb-4">
+                            <button type="button" id="openGoogleDriveSoundGuideBtn" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                วิธีใช้ไฟล์เสียงจาก Google Drive
+                            </button>
+                        </div>
+
+                        <!-- Google Drive Sound Guide Modal -->
+                        <div id="googleDriveSoundGuideModal" class="fixed z-50 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-sky-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </div>
+                                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                                    วิธีใช้ไฟล์เสียงจาก Google Drive สำหรับเสียงเรียกคิว
+                                                </h3>
+                                                <div class="mt-2 text-sm text-gray-600 space-y-3">
+                                                    <p class="font-semibold text-red-600">ข้อควรทราบ: ลิงก์ Google Drive แบบปกติ (เช่น <code class="text-xs bg-gray-100 p-1 rounded">.../view?usp=sharing</code>) จะไม่สามารถนำมาใช้ได้โดยตรง</p>
+                                                    <p><strong>ขั้นตอนที่ 1: ตั้งค่าการแชร์ไฟล์ใน Google Drive</strong></p>
+                                                    <ul class="list-disc list-inside ml-4 space-y-1">
+                                                        <li>คลิกขวาที่ไฟล์เสียงใน Google Drive ของคุณ</li>
+                                                        <li>เลือก "แชร์" (Share) หรือ "รับลิงก์" (Get link)</li>
+                                                        <li>ในส่วน "การเข้าถึงทั่วไป" (General access) ให้เปลี่ยนเป็น <strong>"ทุกคนที่มีลิงก์" (Anyone with the link)</strong></li>
+                                                        <li>จากนั้นตั้งค่าสิทธิ์ของผู้ที่มีลิงก์เป็น <strong>"ผู้มีสิทธิ์ดู" (Viewer)</strong></li>
+                                                        <li>คัดลอกลิงก์ที่ได้ (ตัวอย่าง: <code class="text-xs bg-gray-100 p-1 rounded">https://drive.google.com/file/d/FILE_ID/view?usp=sharing</code>)</li>
+                                                    </ul>
+                                                    <p><strong>ขั้นตอนที่ 2: แปลงลิงก์เป็น Direct Download Link</strong></p>
+                                                    <ul class="list-disc list-inside ml-4 space-y-1">
+                                                        <li>จากลิงก์ที่คัดลอกมาในขั้นตอนที่ 1 ให้สังเกตส่วนที่เป็น <code class="text-xs bg-gray-100 p-1 rounded">FILE_ID</code> (เช่น <code class="text-xs bg-gray-100 p-1 rounded">1exM1hhNUIXn3CwcJmdt1B4KvtIXuXgRe</code>)</li>
+                                                        <li>นำ <code class="text-xs bg-gray-100 p-1 rounded">FILE_ID</code> นั้นมาสร้างเป็นลิงก์ใหม่ในรูปแบบนี้: <br><code class="text-xs bg-gray-100 p-1 rounded break-all">https://drive.google.com/uc?export=download&id=YOUR_FILE_ID</code></li>
+                                                        <li><strong>ตัวอย่างลิงก์ที่ถูกต้อง:</strong> <code class="text-xs bg-gray-100 p-1 rounded break-all">https://drive.google.com/uc?export=download&id=1exM1hhNUIXn3CwcJmdt1B4KvtIXuXgRe</code></li>
+                                                    </ul>
+                                                    <p><strong>ขั้นตอนที่ 3: นำลิงก์ไปใช้ในระบบ</strong></p>
+                                                    <ul class="list-disc list-inside ml-4">
+                                                        <li>นำ Direct Download Link ที่ได้จากขั้นตอนที่ 2 ไปใส่ในช่อง "ลิงก์เสียง" (Link Sound) ในฟอร์ม "เพิ่มเสียงใหม่" หรือ "แก้ไขเสียง" ในหน้านี้</li>
+                                                    </ul>
+                                                    <p class="font-medium">หมายเหตุ: ควรใช้ไฟล์เสียงในรูปแบบที่เว็บเบราว์เซอร์ทั่วไปรองรับได้ดี เช่น <code class="text-xs bg-gray-100 p-1 rounded">.mp3</code> หรือ <code class="text-xs bg-gray-100 p-1 rounded">.wav</code></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <button type="button" id="closeGoogleDriveSoundGuideBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                            ปิด
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                     <!-- Sound Table -->
                     <h4 class="text-md font-semibold text-green-600 mb-3">รายการเสียงที่มีอยู่</h4>
@@ -204,11 +281,12 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ลิงก์เสียง</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">คำอธิบาย</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ประเภทเสียง</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชุดเสียง</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ดำเนินการ</th>
                                 </tr>
                             </thead>
                             <tbody id="soundTableBody" class="bg-white divide-y divide-gray-200">
-                                <tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">กำลังโหลดข้อมูลเสียง...</td></tr>
+                                <tr><td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">กำลังโหลดข้อมูลเสียง...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -220,7 +298,7 @@
         <!-- Announcement Settings Content -->
         <div class="settings-tab-pane hidden" id="announcementSettingsContent" role="tabpanel" aria-labelledby="announcement-settings-tab">
             <div class="bg-teal-50 p-6 rounded-lg shadow">
-                <h3 class="text-lg font-semibold text-teal-700 mb-3">4. จัดการรูปแบบเสียงเรียกคิว (Announcement Format)</h3>
+                 <h3 class="text-lg font-semibold text-teal-700 mb-3">5. จัดการรูปแบบเสียงเรียกคิว (Announcement Format)</h3>
                 <p class="text-sm text-teal-600 mb-5">
                     กำหนดรูปแบบและส่วนประกอบของเสียงประกาศเรียกคิว รวมถึงการเลือกใช้เสียงสำหรับชื่อช่องบริการ
                 </p>
@@ -234,6 +312,30 @@
                             คั่นแต่ละส่วนด้วยจุลภาค (<code>,</code>). ตัวอย่าง: <code>11,{QUEUE_NUMBER},13,{COUNTER_NUMBER}</code>
                         </p>
                     </div>
+
+                    <!-- เพิ่มภายใน <div id="generalSettingsContent"> หรือ Tab ใหม่ -->
+<div class="mt-6 pt-6 border-t border-gray-200">
+    <h4 class="text-md font-semibold text-blue-700 mb-3">รูปแบบการสร้างเสียงเรียกคิว (Sound Generation Method)</h4>
+    <div class="space-y-2">
+        <div class="flex items-center">
+            <input id="soundMethodUrl" name="sound_generation_method" type="radio" value="url" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+            <label for="soundMethodUrl" class="ml-3 block text-sm font-medium text-gray-700">1. ใช้ URL ของไฟล์เสียง (แบบเดิม)</label>
+        </div>
+        <div class="flex items-center">
+            <input id="soundMethodWebSpeech" name="sound_generation_method" type="radio" value="web_speech" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+            <label for="soundMethodWebSpeech" class="ml-3 block text-sm font-medium text-gray-700">2. ใช้ Web Speech API (TTS เสียงไทยใน Browser)</label>
+        </div>
+        <div class="flex items-center">
+            <input id="soundMethodGoogleTTS" name="sound_generation_method" type="radio" value="google_cloud_tts" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300">
+            <label for="soundMethodGoogleTTS" class="ml-3 block text-sm font-medium text-gray-700">3. ใช้ Google Cloud Text-to-Speech (TTS ผ่าน Server)</label>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">
+            หากเลือก Google Cloud TTS, กรุณาตั้งค่า `GOOGLE_TTS_API_KEY` ใน Script Properties ของโปรเจกต์ Apps Script
+        </p>
+    </div>
+</div>
+
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700">การประกาศหมายเลข/ชื่อช่องบริการ (Counter Announcement Type):</label>
                         <div class="mt-2 space-y-2">
@@ -308,6 +410,38 @@
                 </div>
             </div>
         </div>
+
+        <!-- Theme Settings Content -->
+        <div class="settings-tab-pane hidden" id="themeSettingsContent" role="tabpanel" aria-labelledby="theme-settings-tab">
+            <div class="bg-indigo-50 p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold text-indigo-700 mb-3">7. ตั้งค่าธีม (Theme Settings)</h3>
+                <p class="text-sm text-indigo-600 mb-4">
+                    เลือกธีมการแสดงผลสำหรับระบบ
+                </p>
+                <div id="themeSettingsFormArea">
+                    <div class="space-y-3">
+                        <div>
+                             <label for="activeThemeSelect" class="block text-sm font-medium text-gray-700">เลือกธีม:</label>
+                            <div class="mt-1">
+                                <select id="activeThemeSelect" name="ActiveTheme" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-gray-700 sm:text-sm border-gray-300 rounded-md">
+                                    <option value="standard">Standard (ค่าเริ่มต้น)</option>
+                                    <option value="pastel">Pastel (พาสเทล)</option>
+                                    <option value="sunset">Sunset (ตะวันตกดิน)</option>
+                                    <option value="nature">Nature (เขียวธรรมชาติ)</option>
+                                    <option value="aurora">Aurora (ม่วงชมพู)</option>
+                                    <option value="oceanic">Oceanic (ขาว-น้ำเงิน)</option>
+                                    <option value="neontech">NeonTech (มืด-นีออน)</option>
+                                    <option value="neontech-light">NeonTech-Light (สว่าง-นีออน)</option>
+                                    <!-- เพิ่ม theme อื่นๆ ที่นี่ในอนาคต -->
+                                </select>
+                            </div>
+                        </div>
+                        <button id="saveThemeSettingsBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded">บันทึกธีม</button>
+                        <div id="themeSettingsMessage" class="mt-3 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     
@@ -340,6 +474,10 @@
                     <select id="editSoundTypeInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                          <option value="general_purpose">ทั่วไป</option><option value="digit_0">เลข 0</option><option value="digit_1">เลข 1</option><option value="digit_2">เลข 2</option><option value="digit_3">เลข 3</option><option value="digit_4">เลข 4</option><option value="digit_5">เลข 5</option><option value="digit_6">เลข 6</option><option value="digit_7">เลข 7</option><option value="digit_8">เลข 8</option><option value="digit_9">เลข 9</option><option value="start_call">เสียงเริ่มเรียก (start_call)</option><option value="end_call">เสียงจบการเรียก (end_call)</option><option value="counter_prefix">เสียงนำหน้าช่อง (counter_prefix)</option>
                     </select>
+                    </div>
+                  <div>
+                    <label for="editSoundSetInput" class="block text-sm font-medium text-gray-700">ชุดเสียง (Sound Set):</label>
+                    <input type="text" id="editSoundSetInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                   </div>
                 </div>
               </div>

@@ -1,0 +1,109 @@
+<!-- หน้าสำหรับผู้ใช้บริการจองคิว -->
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- หัวข้อหน้าเว็บ (จะถูกตั้งค่าโดย Code.js แต่มีค่า fallback ไว้) -->
+  <title>หน้าจองคิวผู้ใช้บริการ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    <?!= include('css/base-styles'); ?> /* Inject base rules first */
+
+    <? var themeName = activeTheme || 'standard'; ?>
+    <? if (themeName === 'pastel') { ?>
+          <?!= include('css/theme-pastel'); ?>
+    <? } else if (themeName === 'nature') { ?>
+          <?!= include('css/theme-nature'); ?>
+    <? } else if (themeName === 'aurora') { ?>
+          <?!= include('css/theme-aurora'); ?>
+    <? } else if (themeName === 'oceanic') { ?>
+          <?!= include('css/theme-oceanic'); ?>
+    <? } else if (themeName === 'neontech') { ?>
+          <?!= include('css/theme-neontech'); ?>
+    <? } else if (themeName === 'neontech-light') { ?>
+          <?!= include('css/theme-neontech-light'); ?>
+    <? } else if (themeName === 'sunset') { ?>
+          <?!= include('css/theme-sunset'); ?>
+    <? } else { /* Default to standard or if themeName is 'standard' */ ?>
+          <?!= include('css/theme-standard'); ?>
+    <? } ?>
+  </style>
+</head>
+<!-- ส่วน Body ของหน้าเว็บ -->
+<body id="user-page-body" class="font-sans min-h-screen flex flex-col <? if (activeTheme) { ?>theme-<?= activeTheme ?><? } else { ?>theme-standard<? } ?>"> <!-- Background handled by theme CSS -->
+  <!-- Header: ส่วนหัวของหน้า แสดงชื่อองค์กร -->
+  <header class="theme-header p-4 shadow-lg sticky top-0 z-50">
+     <div class="container mx-auto flex justify-between items-center">
+         <h1 class="text-2xl font-bold" id="organizationNameHeader">ระบบจองคิว</h1>
+         <!-- Optional: Add a button to go back to the main app or close -->
+     </div>
+  </header>
+  <!-- Main Content: ส่วนเนื้อหาหลักของหน้า -->
+  <main class="flex-grow container mx-auto px-4 py-8">
+     <!-- Layout แบบ 2 คอลัมน์ (สำหรับจอใหญ่) หรือ 1 คอลัมน์ (สำหรับจอมือถือ) -->
+     <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+         <!-- Column 1: ปุ่มสำหรับกดจองคิว -->
+         <div class="w-full md:w-1/2">
+             <div class="theme-card p-6 rounded-xl shadow-xl h-full flex flex-col justify-center items-center transform hover:scale-105 transition-transform duration-300">
+                 <button id="createQueueBtn" class="theme-button-primary py-8 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-4xl md:text-5xl lg:text-6xl font-bold w-full h-full min-h-[200px] md:min-h-[300px]">
+                     กดจองคิว
+                 </button> <!-- ปุ่มกดจองคิว -->
+             </div>
+         </div>
+
+         <!-- Column 2: ส่วนแสดงผลลัพธ์การจองคิว -->
+         <div class="w-full md:w-1/2 ">
+             <div id="app" class="container mx-auto h-full"> <!-- Removed px-4 py-8 max-w-4xl to allow parent to control padding -->
+                 <div class="theme-card rounded-xl shadow-xl p-6 h-full flex flex-col justify-center">
+                     <!-- ส่วนแสดงผลหมายเลขคิวที่ได้รับ -->
+                     <div id="queueResult" class="text-center"> <!-- Removed py-8, parent div handles centering -->
+                         <h2 id="reserveQueue" class="text-3xl font-bold theme-title-gradient mb-6 hidden">จองคิวสำเร็จ!</h2>
+                         <div class="theme-card-inset p-6 rounded-lg mb-6 shadow-inner"> <!-- Consider a .theme-card-inset class for nested cards if needed -->
+                             <p class="theme-text-default text-lg mb-2">หมายเลขคิวของคุณคือ</p>
+                             <p id="queueNumber" class="text-6xl md:text-7xl font-extrabold theme-title-gradient mb-4">---</p> <!-- Re-using theme-title-gradient, or create a specific one for queue numbers -->
+                             <p id="counterName" class="text-xl theme-text-default"></p> <!-- แสดงชื่อช่องบริการ (ถ้ามี) -->
+                         </div>
+                         <button id="printQueueBtn" class="theme-button-primary font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:shadow-outline text-lg transition-all transform hover:scale-105">
+                             พิมพ์บัตรคิว
+                         </button> <!-- ปุ่มพิมพ์บัตรคิว -->
+                     </div>
+                     <!-- Print Area: ส่วนที่ใช้สำหรับพิมพ์บัตรคิว (ซ่อนไว้ปกติ) -->
+                     <div id="printArea" class="hidden mt-6"> <!-- Added margin top for spacing if shown -->
+                         <div class="p-4 border-2 border-dashed border-gray-300 text-center">
+                             <h3 class="text-xl font-bold" id="printTicketTitle">บัตรคิว</h3>
+                             <p class="text-5xl font-bold my-4" id="printQueueNumber"></p>
+                             <p id="printCounterName" class="mb-2"></p> <!-- แสดงชื่อช่องบริการบนบัตรคิว (ถ้ามี) -->
+                             <p id="printDateTime" class="text-md theme-text-default"></p> <!-- Changed text-gray-500 to theme-text-default -->
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     <!-- Notification Area: พื้นที่แสดงการแจ้งเตือน -->
+     <div id="userPageNotificationArea" class="fixed top-4 right-4 z-50 w-auto max-w-sm"></div>
+  </main>
+  <!-- Footer: ส่วนท้ายของหน้า แสดงชื่อองค์กร -->
+  <footer class="theme-footer text-center py-6 mt-auto">
+     <div class="container mx-auto px-4">
+         <p class="text-sm" id="organizationNameFooter">
+             <!-- ชื่อองค์กรจะถูกโหลดมาแสดงที่นี่ -->
+         </p>
+     </div>
+ </footer>
+  <!-- Script หลัก และ Script เฉพาะของหน้า user-page -->
+  <?!= include('js/main'); ?>  <!-- For formatDateTime, showUserPageNotification etc. -->
+  <?!= include('js/user'); ?>
+  <script>
+     // Script เพิ่มเติมสำหรับ user-page.html (ถ้ามี)
+     // Additional script for user-page.html if needed
+     document.addEventListener('DOMContentLoaded', function() {
+         if (typeof onShowUserSection === 'function') {
+             onShowUserSection(); // This will also load settings for org name
+         }
+     });
+  </script>
+</body>
+</html>

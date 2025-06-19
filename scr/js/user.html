@@ -4,10 +4,8 @@ let lastCreatedQueueNumberUser = null;
 let userPageSettingsCache = null; // Cache for settings on the user page
 
 document.addEventListener('DOMContentLoaded', function() {
-  // โหลดข้อมูลช่องบริการ
-  loadCounters();
-  
-  // ตั้งค่าการทำงานของปุ่มจองคิว
+  // onShowUserSection will be called from user-page.html after DOMContentLoaded
+  // Set up button listeners here as they are part of this page's core functionality
   const createQueueBtn = document.getElementById('createQueueBtn');
   if (createQueueBtn) {
     createQueueBtn.addEventListener('click', createQueue);
@@ -18,17 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if (printQueueBtn) {
     printQueueBtn.addEventListener('click', printQueue);
   }
-
-  // Fetch initial settings when the user page loads to potentially get TicketTitle early
-  // or if auto-print is enabled in the future.
-  if (!userPageSettingsCache) {
-    google.script.run.withSuccessHandler(function(settings) {
-      userPageSettingsCache = settings;
-      // You could pre-fill the printTicketTitle if needed, or do it on print button click
-      // document.getElementById('printTicketTitle').textContent = settings.TicketTitle || 'บัตรคิว';
-    }).getSettings();
-  }
 });
+
 
 // ฟังก์ชันสำหรับโหลดข้อมูลช่องบริการ
 function loadCounters() {
@@ -58,36 +47,58 @@ function loadCounters() {
 // ฟังก์ชันสำหรับจองคิว
 function createQueue() {  
   
-  // แสดงสถานะกำลังโหลด
   const createQueueBtn = document.getElementById('createQueueBtn');
-  const originalText = createQueueBtn.textContent;
+  const initialButtonText = createQueueBtn.textContent; // Store initial text
   createQueueBtn.textContent = 'กำลังจองคิว..';
   createQueueBtn.disabled = true;
+  
   const createreserveQueue = document.getElementById('reserveQueue');
-  createreserveQueue.classList.add('hidden');
+  if(createreserveQueue) createreserveQueue.classList.add('hidden');
   
   google.script.run
-    .withSuccessHandler(function(result) {
+    .withSuccessHandler(function(result) { // Result from .createQueue() backend
       if (result.success) {
-        lastCreatedQueueNumberUser = result.queueNumber; // Store the raw queue number
-        // จองคิวสำเร็จ
-        showQueueResult(lastCreatedQueueNumberUser, userPageSettingsCache); // Pass settings
+        const newQueueNumber = result.queueNumber;
+        lastCreatedQueueNumberUser = newQueueNumber; 
 
-        // Check for auto-print
-        if (userPageSettingsCache && userPageSettingsCache.AutoPrintEnabled === 'enabled') {
-            triggerAutoPrint();
-        }
+        // Fetch current settings to make auto-print decision and update UI
+        google.script.run
+          .withSuccessHandler(function(currentSettings) { // Result from .getSettings()
+            userPageSettingsCache = currentSettings; // Update global cache
 
-      } else {
-        // จองคิวไม่สำเร็จ
-        showAlert(result.message || 'ไม่สามารถจองคิวได้', 'error');
-        createQueueBtn.textContent = originalText;
+            showQueueResult(newQueueNumber, currentSettings); // Display queue number, update print preview elements
+            showUserPageNotification(`จองคิวหมายเลข ${formatQueueNumberForDisplay(newQueueNumber)} สำเร็จแล้ว!`, 'success'); // Added success notification
+
+            if (currentSettings && currentSettings.AutoPrintEnabled === 'enabled') {
+              triggerAutoPrint(); // This calls printQueue()
+            }
+            
+            // Re-enable button after all operations
+            createQueueBtn.textContent = initialButtonText;
+            createQueueBtn.disabled = false;
+          })
+          .withFailureHandler(function(settingsError) {
+            console.error("Failed to fetch settings for auto-print/UI update:", settingsError);
+            showUserPageNotification('ไม่สามารถโหลดการตั้งค่าล่าสุดได้ จะใช้ค่าเริ่มต้นสำหรับการพิมพ์', 'warning');
+            showQueueResult(newQueueNumber, userPageSettingsCache); // Use old cache or defaults
+            
+            // Re-enable button
+            createQueueBtn.textContent = initialButtonText;
+            createQueueBtn.disabled = false;
+          })
+          .getSettings();
+
+      } else { // createQueue backend call failed (e.g., no more queues, system error on backend)
+        showUserPageNotification(result.message || 'ไม่สามารถจองคิวได้', 'error');
+        // Re-enable button
+        createQueueBtn.textContent = initialButtonText;
         createQueueBtn.disabled = false;
       }
     })
-    .withFailureHandler(function(error) {
-      showAlert('เกิดข้อผิดพลาด: ' + error, 'error');
-      createQueueBtn.textContent = originalText;
+    .withFailureHandler(function(error) { // createQueue backend call failed (network error, script error)
+      showUserPageNotification('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message, 'error');
+      // Re-enable button
+      createQueueBtn.textContent = initialButtonText;
       createQueueBtn.disabled = false;
     })
     .createQueue();
@@ -101,20 +112,21 @@ function formatQueueNumberForDisplay(num) {
 
 // ฟังก์ชันสำหรับแสดงผลการจองคิว
 function showQueueResult(rawQueueNumber, currentSettings) {
-  
-  // แสดงหมายเลขคิว
-  document.getElementById('queueNumber').textContent = formatQueueNumberForDisplay(rawQueueNumber);
-  
-  // เตรียมข้อมูลสำหรับการพิมพ์
-  // This will be updated again with fresh settings before actual print
-  document.getElementById('printQueueNumber').textContent = formatQueueNumberForDisplay(rawQueueNumber);
-  document.getElementById('printTicketTitle').textContent = (currentSettings && currentSettings.TicketTitle) ? currentSettings.TicketTitle : 'บัตรคิว';
-  document.getElementById('printDateTime').textContent = formatDateTime(new Date());
+  const queueNumberEl = document.getElementById('queueNumber');
+  const printQueueNumberEl = document.getElementById('printQueueNumber');
+  const printTicketTitleEl = document.getElementById('printTicketTitle');
+  const printDateTimeEl = document.getElementById('printDateTime');
+  const reserveQueueEl = document.getElementById('reserveQueue');
 
-  const createreserveQueue = document.getElementById('reserveQueue');
-  createreserveQueue.classList.remove('hidden');
+  if(queueNumberEl) queueNumberEl.textContent = formatQueueNumberForDisplay(rawQueueNumber);
+  
+  if(printQueueNumberEl) printQueueNumberEl.textContent = formatQueueNumberForDisplay(rawQueueNumber);
+  if(printTicketTitleEl) printTicketTitleEl.textContent = (currentSettings && currentSettings.TicketTitle) ? currentSettings.TicketTitle : 'บัตรคิว';
+  if(printDateTimeEl) printDateTimeEl.textContent = formatDateTime(new Date());
 
-  resetQueueForm()
+  if(reserveQueueEl) reserveQueueEl.classList.remove('hidden');
+
+  // No longer need resetQueueForm() here as button state is managed in createQueue handlers.
 }
 
 // Function to trigger auto print
@@ -259,13 +271,16 @@ function printElementWithStyles(elementId, ticketWidthMm, ticketHeightMm) {
 
 // ฟังก์ชันสำหรับรีเซ็ตฟอร์มจองคิว
 function resetQueueForm() {
-  
-  // เปิดใช้งานปุ่มจองคิว
   const createQueueBtn = document.getElementById('createQueueBtn');
-   
-  createQueueBtn.textContent = 'กดจองคิว';
-  createQueueBtn.disabled = false;
-
+  // Assuming 'originalText' for createQueueBtn is 'กดจองคิว' or similar.
+  // It's better if originalText is a global or passed around if it varies.
+  // For now, let's hardcode it or assume it's globally accessible if needed.
+  // The `originalText` in `createQueue` is local to that function.
+  // Let's assume the button text should always reset to "กดจองคิว".
+  if (createQueueBtn) {
+    createQueueBtn.textContent = 'กดจองคิว'; // Reset to default text
+    createQueueBtn.disabled = false;
+  }
   // Optional: Clear the last created queue number if you want a "fresh" state after printing or navigating away
   // lastCreatedQueueNumberUser = null; 
 }
@@ -307,5 +322,40 @@ function createNotificationArea() {
     area.className = 'fixed top-4 right-4 z-50 w-auto max-w-sm';
     document.body.appendChild(area);
     return area;
+}
+
+// Function to be called when userSection becomes visible
+function onShowUserSection() {
+    console.log("User section shown, refreshing settings cache and counters.");
+    
+    // Re-fetch settings to ensure userPageSettingsCache is up-to-date
+    google.script.run.withSuccessHandler(function(settings) {
+        userPageSettingsCache = settings;
+        console.log("User page settings cache refreshed:", userPageSettingsCache);
+        // Update UI elements that depend on settings, e.g., ticket title in print preview
+        if (settings && settings.TicketTitle) {
+            const printTicketTitleEl = document.getElementById('printTicketTitle');
+            if (printTicketTitleEl) printTicketTitleEl.textContent = settings.TicketTitle;
+        }
+         // Update organization name if it's part of the settings
+        const orgNameHeader = document.getElementById('organizationNameHeader');
+        const orgNameFooter = document.getElementById('organizationNameFooter');
+        if (settings && settings.OrganizationName) {
+            if (orgNameHeader) orgNameHeader.textContent = settings.OrganizationName + " - จองคิว";
+            if (orgNameFooter) orgNameFooter.textContent = "Copyright © " + settings.OrganizationName;
+        } else {
+            if (orgNameHeader) orgNameHeader.textContent = "ระบบจองคิว";
+            if (orgNameFooter) orgNameFooter.textContent = "Copyright © หน่วยงาน";
+        }
+    }).withFailureHandler(function(err) {
+        console.error("Failed to refresh user page settings cache:", err);
+        // Fallback for organization name if settings fetch fails
+        const orgNameHeader = document.getElementById('organizationNameHeader');
+        const orgNameFooter = document.getElementById('organizationNameFooter');
+        if (orgNameHeader) orgNameHeader.textContent = "ระบบจองคิว";
+        if (orgNameFooter) orgNameFooter.textContent = "Copyright © หน่วยงาน";
+    }).getSettings();
+
+    loadCounters(); // Reload counters as well, in case their status changed
 }
 </script>

@@ -1,0 +1,345 @@
+/* NeonTech Theme - Inspired by modern dark UI with neon accents */
+:root {
+  /* Color Palette */
+ 
+  --amethyst-glow-primary: #7c46f9; /* Main purple */
+  --amethyst-glow-light-purple: #a881ff; /* Lighter purple for gradients/blobs */
+  --amethyst-glow-accent-blue: #66a1ff; /* Complementary blue for blobs/accents */
+  --amethyst-glow-dark-purple-bg: #2c1d5d; /* Darker purple for card backgrounds */
+  --amethyst-glow-text-light: #f0e6ff; /* Very light lavender for text */
+  --amethyst-glow-text-medium: #d9c8ff;
+  --amethyst-glow-card-bg: rgba(44, 29, 93, 0.65); /* Dark purple, semi-transparent for general cards */
+  --amethyst-glow-card-border: rgba(168, 129, 255, 0.3); /* Light purple border */
+  --amethyst-glow-card-shadow: 0 0 20px rgba(124, 70, 249, 0.2);
+
+  /* Theme Variables */
+  --theme-bg-gradient-from: var(--amethyst-glow-primary);
+  --theme-bg-gradient-to: var(--amethyst-glow-light-purple);
+
+  /* Cards */
+    --theme-card-bg: var(--amethyst-glow-card-bg);
+  --theme-card-backdrop-blur: blur(8px);
+  --theme-card-border-color: var(--amethyst-glow-card-border);
+  --theme-card-shadow: var(--amethyst-glow-card-shadow);
+
+
+  /* Login Card Specifics */
+ --theme-login-card-bg: rgba(240, 230, 255, 0.35); /* Very light lavender, 35% opacity */
+  --theme-login-card-border-color: rgba(124, 70, 249, 0.4); /* Primary purple border, 40% opacity */
+  --theme-login-card-shadow: 0 8px 32px rgba(44, 29, 93, 0.25); /* Darker, more defined shadow */
+
+  /* Header */
+ --theme-header-bg: rgba(44, 29, 93, 0.8); /* Dark purple, semi-transparent */
+  --theme-header-backdrop-blur: blur(10px);
+  --theme-header-text-color: var(--amethyst-glow-text-light);
+
+
+  /* Footer */
+  --theme-footer-bg: rgba(30, 20, 70, 0.7);
+  --theme-footer-backdrop-blur: blur(8px);
+  --theme-footer-text-color: var(--amethyst-glow-text-medium);
+
+
+  /* Buttons */
+ --theme-button-primary-gradient-from: var(--amethyst-glow-light-purple);
+  --theme-button-primary-gradient-to: var(--amethyst-glow-accent-blue);
+  --theme-button-primary-hover-gradient-from: var(--amethyst-glow-accent-blue);
+  --theme-button-primary-hover-gradient-to: var(--amethyst-glow-light-purple);
+  --theme-button-primary-text-color: var(--amethyst-glow-dark-purple-bg); /* Dark text on light button */
+
+  /* Titles & Text */
+  --theme-title-gradient-from: var(--amethyst-glow-text-light);
+  --theme-title-gradient-to: var(--amethyst-glow-accent-blue);
+  --theme-text-color-default: var(--amethyst-glow-text-light); /* Default text on cards/body */
+  --theme-text-color-on-gradient-cards: var(--amethyst-glow-text-light);
+  --theme-text-muted-on-gradient-cards: var(--amethyst-glow-text-medium);
+
+  /* Dashboard Cards */
+  --theme-dashboard-card1-from: var(--amethyst-glow-primary);
+  --theme-dashboard-card1-to: var(--amethyst-glow-light-purple);
+  --theme-dashboard-card2-from: var(--amethyst-glow-light-purple);
+  --theme-dashboard-card2-to: var(--amethyst-glow-accent-blue);
+  --theme-dashboard-card3-from: var(--amethyst-glow-accent-blue);
+  --theme-dashboard-card3-to: #4a7bd9; /* Darker accent blue */
+  --theme-dashboard-card4-from: var(--amethyst-glow-primary);
+  --theme-dashboard-card4-to: #5e35b1; /* Deeper purple */
+
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.15);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.25);
+  --theme-dashboard-card-button-text-color: var(--amethyst-glow-text-light);
+
+  /* Display Page */
+  --theme-interaction-overlay-bg: rgba(44, 29, 93, 0.9); /* Dark purple, semi-transparent */
+  --theme-interaction-overlay-text: var(--amethyst-glow-text-light);
+
+  --theme-panel-left-bg: var(--amethyst-glow-dark-purple-bg); /* Solid dark purple for left panel */
+  
+  --theme-panel-left-backdrop-blur: none;
+    --theme-panel-right-bg: #1e1240; /* Even darker purple for right panel */
+  --theme-panel-right-backdrop-blur: none;
+
+ --theme-display-header-gradient-from: var(--amethyst-glow-light-purple);
+  --theme-display-header-gradient-to: var(--amethyst-glow-accent-blue);
+  --theme-display-header-text: var(--amethyst-glow-dark-purple-bg); /* Dark text on light gradient */
+  
+  --theme-display-header-border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+
+   --theme-display-time-accent-bg: rgba(0,0,0,0.25);
+  --theme-display-time-accent-text: var(--amethyst-glow-text-light);
+  --theme-display-time-border: 1px solid var(--amethyst-glow-light-purple);
+
+  --theme-current-queue-card-bg-from: var(--amethyst-glow-light-purple);
+  --theme-current-queue-card-bg-to: var(--amethyst-glow-accent-blue);
+  --theme-current-queue-card-text: var(--amethyst-glow-dark-purple-bg); /* Dark text on light card */
+  --theme-current-queue-card-box-shadow: 0 8px 25px rgba(168, 129, 255, 0.25);
+
+  --theme-current-queue-indicator-text: var(--amethyst-glow-dark-purple-bg);
+  --theme-current-queue-indicator-bell-bg: var(--amethyst-glow-dark-purple-bg);
+  --theme-current-queue-indicator-bell-icon: var(--amethyst-glow-light-purple);
+
+  --theme-waiting-list-bg: transparent;
+  --theme-list-heading-text-color: var(--amethyst-glow-text-light); /* On the dark right panel */
+
+  --theme-list-item-bg: rgba(44, 29, 93, 0.5); /* Dark purple, semi-transparent */
+  --theme-list-item-text-color: var(--amethyst-glow-text-light);
+  --theme-list-item-border: 1px solid var(--amethyst-glow-card-border);
+  --theme-list-item-hover-bg: rgba(60, 40, 110, 0.7);
+  --theme-alert-skipped-bg: rgba(255, 41, 156, 0.1); /* Pinkish */
+  --theme-alert-skipped-border: var(--neontech-accent-pink);
+  --theme-alert-skipped-text: var(--neontech-accent-pink);
+
+   --theme-text-on-dark: var(--amethyst-glow-text-light); /* For text on dark video player, if any */
+
+}
+
+// @keyframes neonTechBgAnimation {
+//   0% { background-position: 0% 50%; }
+//   50% { background-position: 100% 50%; }
+//   100% { background-position: 0% 50%; }
+// } // Removed as we want static body gradient now
+
+body {
+  background: linear-gradient(135deg, var(--theme-bg-gradient-from), var(--theme-bg-gradient-to), var(--amethyst-glow-accent-blue)); /* Static gradient */
+  /* background-size and animation removed */
+  color: var(--theme-text-color-default);
+  overflow-x: hidden; /* Prevent horizontal scroll from potential wide elements */
+}
+
+/* Optional: Subtle animated particles/blobs in background */
+body::before, body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  opacity: 0.25; /* Blobs for purple theme */
+  filter: blur(70px);
+  border-radius: 50%;
+}
+body::before {
+  width: 40vw; height: 40vw; min-width: 300px; min-height: 300px;
+  background: radial-gradient(circle, var(--amethyst-glow-light-purple), transparent 70%);
+  top: 5vh; left: 5vw;
+  animation: blobAnimation1 10s infinite alternate ease-in-out; /* Use existing blob animation */
+}
+body::after {
+  width: 35vw; height: 35vw; min-width: 250px; min-height: 250px;
+  background: radial-gradient(circle, var(--amethyst-glow-accent-blue), transparent 70%);
+  bottom: 10vh; right: 10vw; 
+  animation: blobAnimation2 15s infinite alternate ease-in-out -7s; /* Use existing blob animation */
+}
+
+.theme-card {
+  background-color: var(--theme-card-bg);
+  backdrop-filter: var(--theme-card-backdrop-blur);
+  -webkit-backdrop-filter: var(--theme-card-backdrop-blur);
+  border: 1px solid var(--theme-card-border-color);
+  box-shadow: var(--theme-card-shadow);
+  color: var(--theme-text-color-default);
+}
+
+.theme-login-card {
+   background-color: var(--theme-login-card-bg); /* Uses the new light, transparent bg */
+  backdrop-filter: var(--theme-card-backdrop-blur); /* Keep the blur for frosted glass effect */
+  -webkit-backdrop-filter: var(--theme-card-backdrop-blur);
+ border: 1px solid var(--theme-login-card-border-color);
+  box-shadow: var(--theme-login-card-shadow);
+ color: var(--amethyst-glow-dark-purple-bg); /* Dark text for the light transparent card */
+}
+
+/* Login form specific styles */
+#loginForm h1.text-3xl { /* Tailwind class for "ระบบเรียกคิวออนไลน์" */
+ background-image: linear-gradient(to right, var(--amethyst-glow-primary), var(--amethyst-glow-accent-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* Darker gradient text for light card */
+  text-shadow: none; /* Remove shadow if text is dark */
+}
+#loginForm input {
+  background-color: rgba(255, 255, 255, 0.5); /* Lighter input background for contrast on light card */
+  border-color: var(--amethyst-glow-card-border); /* Keep light purple border */
+  color: var(--amethyst-glow-dark-purple-bg); /* Dark text in input fields */
+  box-shadow: inset 0 0 8px rgba(124, 70, 249, 0.1);
+}
+#loginForm input::placeholder {
+    color: var(--amethyst-glow-text-medium); /* Medium purple placeholder, should be fine */
+}
+#loginForm label {
+  color: var(--amethyst-glow-primary); /* Main purple for labels */
+  text-shadow: none;
+
+}
+
+.theme-header {
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur);
+  -webkit-backdrop-filter: var(--theme-header-backdrop-blur);
+  color: var(--theme-header-text-color);
+  border-bottom: 1px solid var(--amethyst-glow-card-border);
+}
+
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur);
+  -webkit-backdrop-filter: var(--theme-footer-backdrop-blur);
+  color: var(--theme-footer-text-color);
+  border-top: 1px solid var(--amethyst-glow-card-border);
+
+}
+
+.theme-button-primary {
+   background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow to transition */
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+  box-shadow: 0 0 15px var(--amethyst-glow-light-purple), 0 0 5px white; /* Glow effect */
+  transform: scale(1.03);
+}
+
+.theme-title-gradient {
+  background-image: linear-gradient(to right, var(--theme-title-gradient-from), var(--theme-title-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.theme-text-default {
+    color: var(--theme-text-color-default);
+}
+
+.theme-card-inset {
+  background-color: rgba(20, 10, 40, 0.7); /* Darker inset */
+  border: 1px solid var(--amethyst-glow-accent-blue);
+  color: var(--theme-text-color-default);
+}
+
+/* Dashboard Cards */
+.theme-dashboard-card {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid transparent; /* Base border */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    transition: all 0.3s ease-in-out;
+    color: var(--theme-text-color-on-gradient-cards);
+}
+.theme-dashboard-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    border-color: var(--amethyst-glow-light-purple);
+    box-shadow: 0 12px 35px rgba(168, 129, 255, 0.2);
+}
+.theme-dashboard-card p { color: var(--theme-text-muted-on-gradient-cards); margin-bottom: 1rem; }
+.theme-dashboard-card h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; text-shadow: 0 0 5px currentColor; }
+
+
+.theme-dashboard-card-button {
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    font-weight: 600; padding: 0.5rem 1.25rem; border-radius: 0.5rem;
+    border: 1px solid var(--amethyst-glow-light-purple);
+    transition: all 0.2s ease;
+}
+.theme-dashboard-card-button:hover {
+    background-color: var(--theme-dashboard-card-button-hover-bg);
+    color: var(--amethyst-glow-text-light);
+    box-shadow: 0 0 10px var(--amethyst-glow-light-purple);
+}
+
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* Display Page Specifics */
+.theme-interaction-overlay { background-color: var(--theme-interaction-overlay-bg); color: var(--theme-interaction-overlay-text); }
+.theme-panel-left { background-color: var(--theme-panel-left-bg); }
+.theme-panel-right { background-color: var(--theme-panel-right-bg); }
+.theme-display-header { background-image: linear-gradient(to right, var(--theme-display-header-gradient-from), var(--theme-display-header-gradient-to)); color: var(--theme-display-header-text); border-bottom: var(--theme-display-header-border-bottom); box-shadow: 0 2px 15px rgba(168, 129, 255, 0.15); }
+.theme-current-queue-card { background-image: linear-gradient(to bottom right, var(--theme-current-queue-card-bg-from), var(--theme-current-queue-card-bg-to)); color: var(--theme-current-queue-card-text); box-shadow: var(--theme-current-queue-card-box-shadow); }
+@keyframes blink-text-color-neontech { 0%, 100% { color: var(--theme-current-queue-indicator-text); opacity: 1; } 50% { color: var(--amethyst-glow-light-purple); opacity: 0.7; } }
+.theme-current-queue-indicator-text { color: var(--theme-current-queue-indicator-text); animation: blink-text-color-neontech 1.5s infinite; }
+.theme-current-queue-indicator-bell-bg { background-color: var(--theme-current-queue-indicator-bell-bg); }
+.theme-current-queue-indicator-bell-icon { color: var(--theme-current-queue-indicator-bell-icon); }
+.theme-waiting-list-container { background-color: var(--theme-waiting-list-bg); }
+.theme-list-heading svg { color: var(--amethyst-glow-light-purple); }
+.theme-list-heading.waiting svg { color: var(--amethyst-glow-light-purple); }
+.theme-list-heading.completed svg { color: var(--amethyst-glow-accent-blue); }
+.theme-list-heading.skipped svg { color: #ffae42; /* Yellow Orange for skipped */ }
+.theme-alert-skipped { background-color: var(--theme-alert-skipped-bg); color: var(--theme-alert-skipped-text); border: 1px solid var(--theme-alert-skipped-border); box-shadow: 0 0 10px var(--theme-alert-skipped-text); }
+
+/* User Page Specifics */
+#queueNumber.theme-title-gradient {
+ background-image: linear-gradient(to right, var(--amethyst-glow-light-purple), var(--amethyst-glow-accent-blue));
+  text-shadow: 0 0 8px var(--amethyst-glow-light-purple);
+}
+#reserveQueue.theme-title-gradient {
+   background-image: linear-gradient(to right, var(--amethyst-glow-accent-blue), var(--amethyst-glow-light-purple));
+  text-shadow: 0 0 5px var(--amethyst-glow-accent-blue);
+}
+
+/* Ensure text in the right panel of display page is readable */
+#display-page-right-panel .theme-list-heading span {
+  color: var(--theme-list-heading-text-color);
+}
+#display-page-right-panel .theme-list-item-bg {
+  background-color: var(--theme-list-item-bg);
+  color: var(--theme-list-item-text-color);
+  border: 1px solid var(--theme-list-item-border);
+}
+#display-page-right-panel .theme-list-item-bg:hover {
+  background-color: var(--theme-list-item-hover-bg);
+   border-color: var(--amethyst-glow-light-purple);
+}
+
+/* Specific styling for the main header on the display page (Organization Name) */
+#display-page-left-panel-header { /* Assuming you might add an ID to the left panel header div */
+    /* Example: border-bottom: 1px solid var(--neontech-accent-cyan); */
+}
+
+/* Ensure the "เรียกคิวหมายเลข" and time on display page are styled */
+#display-page-right-panel .theme-display-header span,
+#display-page-right-panel .theme-display-header div#currentTime {
+   color: var(--theme-display-header-text); /* Dark text on light gradient header */
+  text-shadow: 0 0 2px rgba(255,255,255,0.3); /* Subtle light shadow for readability */
+
+}
+
+/* Animated blobs from Aurora, if desired, can be reused by copying the @keyframes blobAnimation1, blobAnimation2 */
+/* and the body::before, body::after rules, adjusting colors and opacity. */
+/* For NeonTech, they should be darker or more subtle if used. */
+
+/* Re-using Aurora's blob animations for NeonTech */
+@keyframes blobAnimation1 {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  25% { transform: translate(20px, -30px) scale(1.1) rotate(45deg); border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%; }
+  50% { transform: translate(-10px, 20px) scale(0.9) rotate(90deg); border-radius: 70% 30% 30% 70% / 60% 70% 30% 30%; }
+  75% { transform: translate(30px, 10px) scale(1.05) rotate(135deg); border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%; }
+}
+
+@keyframes blobAnimation2 {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 60% 40% 30% 70% / 70% 30% 70% 30%; }
+  25% { transform: translate(-25px, 15px) scale(0.95) rotate(-30deg); border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%; }
+  50% { transform: translate(15px, -20px) scale(1.15) rotate(60deg); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  75% { transform: translate(-10px, 25px) scale(1) rotate(-60deg); border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%; }
+}

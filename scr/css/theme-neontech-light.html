@@ -1,0 +1,163 @@
+<style>
+  /* NeonTech-Light Theme Styles */
+  :root {
+    /* Retained NeonTech Background */
+    --neon-light-bg-dark: #0d1117; /* Dark GitHub-like background */
+
+    /* Oceanic Style Variables */
+    --oceanic-card-bg: #ffffff; /* White cards */
+    --oceanic-card-border: #d0d7de; /* Light grey border */
+    --oceanic-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(149, 157, 165, 0.1);
+
+    --oceanic-text-on-dark-bg: #e6edf3; /* Light text for dark background */
+    --oceanic-text-on-light-bg: #1f2328; /* Dark text for light cards */
+    --oceanic-text-secondary-on-light-bg: #57606a; /* Dimmer text for light cards */
+
+    --oceanic-primary-blue: #0969da; /* Primary blue for buttons, links */
+    --oceanic-primary-blue-hover: #0550ae;
+    --oceanic-primary-blue-border: #0969da;
+
+    --oceanic-header-bg: #161b22; /* Slightly lighter dark for headers */
+    --oceanic-footer-bg: var(--oceanic-header-bg);
+    --oceanic-footer-border: #30363d;
+    --oceanic-footer-text: var(--oceanic-text-on-dark-bg);
+
+    --oceanic-input-bg: #ffffff;
+    --oceanic-input-border: #d0d7de;
+    --oceanic-input-focus-border: var(--oceanic-primary-blue);
+    --oceanic-input-focus-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3);
+    --oceanic-input-text: var(--oceanic-text-on-light-bg);
+  }
+
+  .theme-neontech-light {
+    background-color: var(--neon-light-bg-dark);
+     color: var(--oceanic-text-on-dark-bg); /* Default text on dark background */
+    font-family: 'Orbitron', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Futuristic font */
+  }
+
+  /* --- Cards (Login, Main, Dashboard Items) --- */
+  .theme-neontech-light .theme-card,
+  .theme-neontech-light .theme-login-card,
+  .theme-neontech-light .theme-dashboard-card {
+     background-color: var(--oceanic-card-bg);
+    border: 1px solid var(--oceanic-card-border);
+    box-shadow: var(--oceanic-card-shadow);
+    color: var(--oceanic-text-on-light-bg); /* Text inside cards is dark */
+    border-radius: 0.75rem; /* 12px */
+    padding: 1.5rem; /* 24px */
+  }
+
+  .theme-neontech-light .theme-dashboard-card-1 {
+    /* Can have specific oceanic accent if needed, e.g. border-left-color */
+  }
+  .theme-neontech-light .theme-dashboard-card-2 {
+     /* Can have specific oceanic accent */
+  }
+  .theme-neontech-light .theme-dashboard-card-3 {
+    /* Can have specific oceanic accent */
+  }
+   .theme-neontech-light .theme-dashboard-card-4 { /* Example for a fourth card or default */
+     /* Can have specific oceanic accent */
+  }
+
+  /* --- Text & Titles --- */
+  .theme-neontech-light .theme-title-gradient {
+        color: var(--oceanic-primary-blue); /* Solid blue for titles */
+    background: none; /* Remove gradient */
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+
+  }
+
+  .theme-neontech-light .theme-text-default {
+    /* This class's color depends on context.
+       If on main dark bg, it's var(--oceanic-text-on-dark-bg).
+       If inside a light card, it should be var(--oceanic-text-on-light-bg).
+       The default body color handles the first case.
+       Card content color handles the second.
+       This class might be redundant or need more specific usage.
+    */
+    color: inherit; /* Inherit from parent, which should be set correctly */
+  }
+
+  .theme-neontech-light .theme-dashboard-card h2 {
+   color: var(--oceanic-primary-blue); /* Titles in cards */
+  }
+  
+  .theme-neontech-light .theme-dashboard-card p {
+    color: var(--oceanic-text-secondary-on-light-bg); /* Paragraph text in cards */
+  }
+
+  /* --- Buttons --- */
+  .theme-neontech-light .theme-button-primary,
+  .theme-neontech-light .theme-dashboard-card-button {
+    background-color: var(--oceanic-primary-blue);
+    color: #ffffff; /* White text on blue buttons */
+    border: 1px solid var(--oceanic-primary-blue-border);
+    box-shadow: 0 1px 0 rgba(27,31,36,0.04), inset 0 1px 0 rgba(255,255,255,0.25);
+    text-transform: none; /* Oceanic buttons usually not uppercase */
+    font-weight: bold;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .theme-neontech-light .theme-button-primary:hover,
+  .theme-neontech-light .theme-dashboard-card-button:hover {
+     background-color: var(--oceanic-primary-blue-hover);
+    border-color: var(--oceanic-primary-blue-hover);
+    box-shadow: 0 1px 0 rgba(27,31,36,0.1), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+
+  /* --- Login Form Specifics --- */
+  .theme-neontech-light .theme-login-card {
+    /* Inherits general card style, which is now light */
+  }
+  .theme-neontech-light .theme-login-card label {
+   color: var(--oceanic-text-on-light-bg); /* Dark label on light card */
+    font-weight: bold;
+  }
+  .theme-neontech-light .theme-login-card input[type="text"],
+  .theme-neontech-light .theme-login-card input[type="password"] {
+   background-color: var(--oceanic-input-bg);
+    border: 1px solid var(--oceanic-input-border);
+    color: var(--oceanic-input-text);
+    border-radius: 0.375rem; /* 6px */
+  }
+  .theme-neontech-light .theme-login-card input[type="text"]:focus,
+  .theme-neontech-light .theme-login-card input[type="password"]:focus {
+    border-color: var(--oceanic-input-focus-border);
+    box-shadow: var(--oceanic-input-focus-shadow);
+    background-color: var(--oceanic-input-bg); /* Keep bg same on focus */
+  }
+  .theme-neontech-light .theme-login-card .theme-button-primary { /* Login button */
+     /* Inherits .theme-button-primary oceanic style */
+  }
+
+  /* --- Headers (e.g., user-page, display-page) --- */
+  .theme-neontech-light .theme-header, /* For user-page.html */
+  .theme-neontech-light .theme-display-header { /* For display-page.html */
+    background-color: var(--oceanic-header-bg);
+    color: var(--oceanic-text-on-dark-bg);
+    /* box-shadow: 0 1px 2px rgba(0,0,0,0.1); */ /* Optional shadow for headers */
+  }
+
+  /* --- Footer --- */
+  .theme-neontech-light .theme-footer {
+    background-color: var(--oceanic-footer-bg);
+    color: var(--oceanic-footer-text);
+    border-top: 1px solid var(--oceanic-footer-border);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 3rem;
+  }
+
+  /* Ensure Tailwind base styles don't override theme text colors too aggressively */
+  .theme-neontech-light h1, .theme-neontech-light h2, .theme-neontech-light h3, .theme-neontech-light p, .theme-neontech-light span, .theme-neontech-light label {
+    /* color: inherit; */ /* Let specific theme rules dictate color */
+  }
+
+</style>
+
+<!-- Optional: Link to Orbitron font if not already globally included -->
+<!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"> -->

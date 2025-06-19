@@ -1,0 +1,316 @@
+/* Standard Theme (Original Purple/Blue Gradient) */
+:root {
+  /* ตัวแปรสีหลักของธีม */
+  --theme-bg-gradient-from: #7c3aed; /* purple-600 */
+  --theme-bg-gradient-to: #3b82f6;   /* blue-500 */
+  --theme-card-bg: rgba(255, 255, 255, 0.95);
+  --theme-card-backdrop-blur: blur(4px);
+  --theme-header-bg: #7c3aed; /* For user-page, display-page headers */
+  --theme-header-backdrop-blur: blur(8px);
+  --theme-header-text-color: white;
+  --theme-footer-bg: rgba(0, 0, 0, 0.15); /* Black, 15% transparent */
+  --theme-footer-backdrop-blur: blur(4px);
+  --theme-footer-text-color: #e5e7eb; /* Tailwind gray-200 */
+  --theme-button-primary-gradient-from: #7c3aed;
+  --theme-button-primary-gradient-to: #3b82f6;
+  --theme-button-primary-hover-gradient-from: #6d28d9;
+  --theme-button-primary-hover-gradient-to: #2563eb;
+  --theme-button-primary-text-color: white;
+  --theme-title-gradient-from: #ec4899; /* pink-500 */
+  --theme-title-gradient-to: #8b5cf6;   /* violet-600 */
+  --theme-text-color-default: #374151; /* gray-700 for general text on light cards */
+  --theme-text-color-on-gradient-cards: white;
+  --theme-text-muted-on-gradient-cards: #e0e7ff; /* indigo-100 or similar for p tags on gradient cards */
+
+  /* Specifics for dashboard cards from original theme */
+  /* ตัวแปรสีเฉพาะสำหรับการ์ดบน Dashboard */
+  --theme-dashboard-card1-from: #60a5fa; /* blue-400 */
+  --theme-dashboard-card1-to: #4f46e5;   /* indigo-500 */
+  --theme-dashboard-card2-from: #34d399; /* green-400 */
+  --theme-dashboard-card2-to: #0d9488;   /* teal-500 */
+  --theme-dashboard-card3-from: #a78bfa; /* purple-400 */
+  --theme-dashboard-card3-to: #ec4899;   /* pink-500 */
+  --theme-dashboard-card4-from: #facc15; /* yellow-400 */
+  --theme-dashboard-card4-to: #f97316;   /* orange-500 */
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.3);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.4);
+  --theme-dashboard-card-button-text-color: white;
+
+  /* Display Page Specific Variables */
+  /* ตัวแปรสีเฉพาะสำหรับหน้า Display Page */
+  --theme-interaction-overlay-bg: rgba(40, 10, 70, 0.85); /* Darker purple, semi-transparent */
+  --theme-interaction-overlay-text: white;
+
+  /* Left panel (video/slideshow area and current queue) */
+  --theme-panel-left-bg: rgba(30, 10, 50, 0.65); /* Dark semi-transparent purple */
+  --theme-panel-left-backdrop-blur: blur(5px);
+
+  /* Right panel (lists area: waiting, completed, skipped) */
+  --theme-panel-right-bg: white; /* Request 5: Current Queue Section's parent bg to white */
+  --theme-panel-right-backdrop-blur: var(--theme-card-backdrop-blur); /* Uses general card blur */
+
+  /* Headers within display page panels (e.g., "Current Queue", "Waiting List") */
+  --theme-display-header-bg: rgba(255, 255, 255, 0.1); /* Subtle light, highly transparent */
+  --theme-display-header-gradient-from: var(--theme-button-primary-gradient-from); /* For request 3 */
+  --theme-display-header-gradient-to: var(--theme-button-primary-gradient-to);     /* For request 3 */
+  --theme-display-header-backdrop-blur: blur(10px); /* Stronger blur for readability */
+  --theme-display-header-text: white; /* For requests 2 & 4 */
+  --theme-display-header-border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle separator */
+
+  /* Clock / Time display accent */
+  --theme-display-time-accent-bg: rgba(0,0,0,0.25); /* Neutral dark accent for time box */
+  --theme-display-time-accent-text: white;
+  --theme-display-time-border: 1px solid rgba(255,255,255,0.3); /* Border for the time box */
+  
+  /* Current Queue Card (the main focus on the left panel) */
+  --theme-current-queue-card-bg-from: var(--theme-button-primary-gradient-from);
+  --theme-current-queue-card-bg-to: var(--theme-button-primary-gradient-to);
+  --theme-current-queue-card-text: var(--theme-text-color-on-gradient-cards); /* Request 7 & 9: White text on card */
+  --theme-current-queue-card-box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Adjusted shadow for white card */
+
+  /* Details within the Current Queue Card (e.g., "Queue No.", "Counter", bell icon) */
+  --theme-current-queue-indicator-text: #fbbf24; /* amber-400 for Request 3: "กำลังเรียกคิว" text color */
+  --theme-current-queue-indicator-bell-bg: #FFFFFF; /* Request 8: White circle for bell */
+  --theme-current-queue-indicator-bell-icon: var(--theme-button-primary-gradient-from); /* Request 8: Purple bell icon */
+
+  /* Waiting Queue List background */
+  --theme-waiting-list-bg: transparent; /* Request 2: No background for waitingQueueList */
+
+  /* Text color for list headings (like "WAITING") on the right panel. Uses display header text color. */
+  --theme-list-heading-text-color: var(--theme-display-header-text);
+
+  /* List Items in Right Panel (Waiting, Completed, Skipped queues) */
+  --theme-list-item-bg: rgba(255, 255, 255, 0.85); /* Semi-transparent white for list items */
+  --theme-list-item-text-color: #2c134d; /* Dark purple text (e.g., gray-800 or a dark theme purple) for readability */
+  --theme-list-item-border: 1px solid rgba(0,0,0,0.07); /* Very subtle border for each item */
+  --theme-list-item-hover-bg: rgba(255, 255, 255, 1); /* Solid white on hover for emphasis */
+
+  /* Alert styling for skipped queues if they need special highlighting in lists */
+  --theme-alert-skipped-bg: #ffedd5; /* Tailwind orange-100 - Light Orange BG */
+  --theme-alert-skipped-border: #f97316; /* Tailwind orange-500 - Orange Border */
+  --theme-alert-skipped-text: #c2410c; /* Tailwind orange-700 - Dark Orange Text */
+
+  --theme-text-on-dark: #e5e7eb; /* gray-200 for general text on very dark backgrounds (e.g., video player controls) */
+}
+
+/* สไตล์สำหรับ body ของธีมมาตรฐาน */
+body {
+  background: linear-gradient(135deg, 
+    var(--theme-bg-gradient-from), 
+    var(--theme-title-gradient-to), /* Using pink from title for more dynamism */
+    var(--theme-bg-gradient-to),
+    var(--theme-title-gradient-from), /* Repeating pink for smoother loop */
+    var(--theme-bg-gradient-from)); /* Repeating purple for smoother loop */
+  background-size: 300% 300%; /* Make the gradient larger than the viewport */
+  animation: animatedStandardGradient 15s ease infinite; /* Apply the animation */
+  color: var(--theme-text-color-default); 
+}
+
+/* สไตล์สำหรับการ์ดทั่วไป เช่น การ์ด login, ส่วนการตั้งค่า */
+.theme-card { /* For general cards like login, settings sections */
+  background-color: var(--theme-card-bg);
+   backdrop-filter: var(--theme-card-backdrop-blur); /* Apply backdrop blur to general cards */
+}
+
+/* สไตล์สำหรับส่วนหัวของหน้า user-page, display-page */
+.theme-header { /* For user-page.html header, display-page headers */
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur);
+  color: var(--theme-header-text-color);
+}
+
+/* สไตล์สำหรับส่วนท้ายของหน้า */
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur);
+  color: var(--theme-footer-text-color);
+}
+
+/* สไตล์สำหรับปุ่มหลัก */
+.theme-button-primary {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+}
+
+* สไตล์สำหรับหัวข้อที่เป็น gradient */
+.theme-title-gradient {
+  background-image: linear-gradient(to right, var(--theme-title-gradient-from), var(--theme-title-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Overrides for user-page elements in standard theme */
+/* ทำให้หมายเลขคิวบนหน้า user-page เป็นสีน้ำเงินเข้มสำหรับ theme-standard */
+#queueNumber.theme-title-gradient {
+  background-image: none; /* ลบการไล่สีพื้นหลัง */
+  -webkit-background-clip: initial; /* รีเซ็ตการ clip พื้นหลัง */
+  background-clip: initial; /* รีเซ็ตการ clip พื้นหลัง */
+  color: #1e3a8a; /* สีน้ำเงินเข้ม (Tailwind blue-800) */
+}
+
+/* ทำให้ข้อความ "จองคิวสำเร็จ!" บนหน้า user-page เป็นสีเขียวสำหรับ theme-standard */
+#reserveQueue.theme-title-gradient {
+  background-image: none; /* ลบการไล่สีพื้นหลัง */
+  -webkit-background-clip: initial; /* รีเซ็ตการ clip พื้นหลัง */
+  background-clip: initial; /* รีเซ็ตการ clip พื้นหลัง */
+  color: #16a34a; /* สีเขียว (Tailwind green-600) */
+}
+/* ทำให้ข้อความ "หมายเลขคิวของคุณคือ" บนหน้า user-page เป็นสีน้ำเงินสำหรับ theme-standard */
+#queueResult .theme-card-inset > p.theme-text-default:first-child {
+  color: #2563eb; /* สีน้ำเงิน (Tailwind blue-600) */
+}
+
+/* สไตล์สำหรับข้อความทั่วไปบน .theme-card */
+.theme-text-default { /* For general text on .theme-card elements */
+    color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดที่ซ้อนอยู่ข้างใน */
+.theme-card-inset { /* Style for nested cards, similar to theme-card but can be customized */
+  background-color: var(--theme-card-bg); /* Or a slightly different shade if desired */
+  backdrop-filter: var(--theme-card-backdrop-blur);
+}
+
+ /* สไตล์ทั่วไปสำหรับการ์ดบน Dashboard */
+.theme-dashboard-card { /* Common styles for all dashboard cards */
+     color: var(--theme-text-color-on-gradient-cards); /* สีข้อความบนการ์ด */
+    padding: 1.5rem; /* ระยะห่างภายใน */
+    border-radius: 0.75rem; /* ความโค้งมนของขอบ */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); /* เงา */
+    transition-property: all; /* กำหนด transition */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* รูปแบบ transition */
+    transition-duration: 150ms; /* ระยะเวลา transition */
+}
+
+/* สไตล์ hover สำหรับการ์ดบน Dashboard */
+.theme-dashboard-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); /* shadow-xl */
+    transform: translateY(-0.25rem); /* hover:-translate-y-1 */
+}
+.theme-dashboard-card p {
+    color: var(--theme-text-muted-on-gradient-cards);
+    margin-bottom: 1rem; /* mb-4 */
+}
+.theme-dashboard-card h2 { /* สไตล์หัวข้อ H2 ในการ์ด Dashboard */
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 0.75rem; /* mb-3 */
+}
+.theme-dashboard-card-button { /* สไตล์ปุ่มภายในการ์ด Dashboard */
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    backdrop-filter: blur(4px); /* backdrop-blur-sm */
+    font-weight: 600; /* font-semibold */
+    padding: 0.5rem 1.25rem; /* py-2 px-5 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition-property: background-color, color, box-shadow, transform, filter, -webkit-backdrop-filter, backdrop-filter; /* More comprehensive transition */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+.theme-dashboard-card-button:hover { /* สไตล์ hover สำหรับปุ่มในการ์ด Dashboard */
+    background-color: var(--theme-dashboard-card-button-hover-bg);
+}
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+/* Specific colors for list heading icons based on original */
+.theme-list-heading.waiting svg { color: #7c3aed; /* purple-500 */ }
+.theme-list-heading.completed svg { color: #10b981; /* green-500 */ }
+.theme-list-heading.skipped svg { color: #f97316; /* orange-500 */ }
+
+/* Styles for specific display-page elements using their dedicated variables */
+.theme-interaction-overlay {
+  /* สไตล์สำหรับ Overlay เริ่มต้นการแสดงผล - ใช้สีพื้นหลังโปร่งแสง */
+  background-color: var(--theme-interaction-overlay-bg);
+  color: var(--theme-interaction-overlay-text);
+}
+
+.theme-panel-left {
+   /* สไตล์สำหรับแผงด้านซ้าย (วิดีโอ/สไลด์) บน display-page */
+  background-color: var(--theme-panel-left-bg);
+  backdrop-filter: var(--theme-panel-left-backdrop-blur);
+}
+
+.theme-panel-right {
+  /* สไตล์สำหรับแผงด้านขวา (รายการคิว) บน display-page */
+  background-color: var(--theme-panel-right-bg);
+  /* backdrop-filter: var(--theme-panel-right-backdrop-blur); /* White bg makes blur ineffective */
+}
+
+.theme-display-header {
+  /* สไตล์สำหรับส่วนหัวภายใน display-page */
+  background-image: linear-gradient(to right, var(--theme-display-header-gradient-from), var(--theme-display-header-gradient-to));
+  color: var(--theme-display-header-text);
+  /* backdrop-filter: var(--theme-display-header-backdrop-blur); /* Opaque gradient makes blur ineffective */
+  border-bottom: var(--theme-display-header-border-bottom);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-md for Request 1 */
+}
+
+/* สไตล์สำหรับการ์ดแสดงคิวปัจจุบันบน display-page */
+.theme-current-queue-card {
+  background-image: linear-gradient(to bottom right, var(--theme-current-queue-card-bg-from), var(--theme-current-queue-card-bg-to)); /* ไล่สีพื้นหลัง */
+  color: var(--theme-current-queue-card-text); /* สีข้อความ */
+  box-shadow: var(--theme-current-queue-card-box-shadow); /* เงา */
+}
+
+/* Animation สำหรับข้อความ "กำลังเรียกคิว" */
+@keyframes blink-text-color {
+  0%, 100% {
+    color: var(--theme-current-queue-indicator-text); /* Original amber color */
+  }
+  50% {
+    color: white; /* Blink to white */
+  }
+}
+
+/* For Request 3: "กำลังเรียกคิว" text color */
+/* สไตล์สำหรับข้อความ "กำลังเรียกคิว" */
+.theme-current-queue-indicator-text {
+  color: var(--theme-current-queue-indicator-text);
+  animation: blink-text-color 1.5s infinite; /* Apply blinking animation */
+}
+
+/* Bell icon and its background are styled by their specific variables already */
+/* สไตล์สำหรับพื้นหลังไอคอนกระดิ่ง */
+.theme-current-queue-indicator-bell-bg {
+  background-color: var(--theme-current-queue-indicator-bell-bg);
+}
+
+/* สไตล์สำหรับไอคอนกระดิ่ง */
+.theme-current-queue-indicator-bell-icon {
+  color: var(--theme-current-queue-indicator-bell-icon);
+}
+
+/* สไตล์สำหรับคอนเทนเนอร์รายการคิวรอเรียก */
+.theme-waiting-list-container { /* For request 10 */
+  background-color: var(--theme-waiting-list-bg);
+  /* padding: 1rem; */ /* Removed padding */
+  /* border-radius: 0.5rem; */ /* Removed border-radius */
+}
+
+/* Styling for items in waitingQueueList and completedQueueHistory if needed */
+/* Example: .theme-list-item { background-color: var(--theme-list-item-bg); color: var(--theme-list-item-text-color); } */
+
+/* สไตล์สำหรับรายการคิวที่ถูกข้าม */
+.theme-alert-skipped {
+  background-color: var(--theme-alert-skipped-bg);
+  color: var(--theme-alert-skipped-text);
+  border-color: var(--theme-alert-skipped-border);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.theme-login-card {
+  background-color: rgba(255, 255, 255, 0.98); /* More opaque than general theme-card */
+  backdrop-filter: blur(5px); /* Slightly more blur */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+  color: var(--theme-text-color-default);
+}
+
+</style>

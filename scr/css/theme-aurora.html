@@ -1,0 +1,296 @@
+/* Aurora Theme - ธีมม่วงชมพู ไล่สีเคลื่อนไหว และ Glassmorphism */
+:root {
+  /* Color Palette */
+  --aurora-deep-purple: #581c87; /* Purple 800 */
+  --aurora-purple: #7e22ce; /* Purple 700 */
+  --aurora-vibrant-pink: #db2777; /* Pink 600 */
+  --aurora-soft-pink: #fbcfe8; /* Pink 200 */
+  --aurora-lilac: #c4b5fd; /* Violet 300 */
+  --aurora-dark-text: #37314f; /* Dark purple-gray for text on light surfaces */
+  --aurora-light-text: #f3e8ff; /* Light purple-ish white for text on dark surfaces */
+
+  /* Theme Variables */
+  --theme-bg-gradient-from: var(--aurora-purple);
+  --theme-bg-gradient-to: var(--aurora-vibrant-pink);
+  /* Card (No Glassmorphism) */
+  --theme-card-bg: #3b0764; /* Dark solid purple, good contrast for light text */
+  --theme-card-backdrop-blur: none; /* REMOVE GLASS EFFECT */
+  --theme-card-border-color: #581c87; /* Slightly lighter purple border */
+  --theme-card-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.25); /* Standard shadow */
+
+  --theme-header-bg: var(--aurora-deep-purple); /* Solid deep purple */
+  --theme-header-backdrop-blur: none; /* REMOVE GLASS EFFECT */
+  --theme-header-text-color: var(--aurora-light-text);
+
+  --theme-footer-bg: #2a0547; /* Even darker solid purple for footer */
+  --theme-footer-backdrop-blur: none; /* REMOVE GLASS EFFECT */
+  --theme-footer-text-color: var(--aurora-lilac);
+
+  --theme-button-primary-gradient-from: var(--aurora-vibrant-pink);
+  --theme-button-primary-gradient-to: var(--aurora-purple);
+  --theme-button-primary-hover-gradient-from: var(--aurora-purple);
+  --theme-button-primary-hover-gradient-to: var(--aurora-vibrant-pink);
+  --theme-button-primary-text-color: white;
+  --theme-title-gradient-from: var(--aurora-soft-pink);
+  --theme-title-gradient-to: var(--aurora-lilac);
+  --theme-text-color-default: var(--aurora-light-text); /* For text on the now-dark cards */
+  --theme-text-color-on-gradient-cards: white;
+  --theme-text-muted-on-gradient-cards: var(--aurora-lilac);
+
+  /* Dashboard Cards */
+  --theme-dashboard-card1-from: #8b5cf6; /* Violet 500 */
+  --theme-dashboard-card1-to: #ec4899;   /* Pink 500 */
+  --theme-dashboard-card2-from: #d946ef; /* Fuchsia 500 */
+  --theme-dashboard-card2-to: #a21caf;   /* Fuchsia 700 */
+  --theme-dashboard-card3-from: #6d28d9; /* Violet 700 */
+  --theme-dashboard-card3-to: #c026d3;   /* Fuchsia 600 */
+  --theme-dashboard-card4-from: #e879f9; /* Fuchsia 400 */
+  --theme-dashboard-card4-to: #db2777;   /* Pink 600 */
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.15);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.25);
+  --theme-dashboard-card-button-text-color: white;
+
+  /* Display Page */
+  --theme-interaction-overlay-bg: rgba(26, 10, 46, 0.9);
+  --theme-interaction-overlay-text: white;
+  --theme-panel-left-bg: #2a0547; /* Dark solid purple for left panel */
+  --theme-panel-left-backdrop-blur: none; /* REMOVE GLASS EFFECT */
+  --theme-panel-right-bg: #f3e8ff; /* Light lilac, almost white, for right panel */
+  --theme-panel-right-backdrop-blur: none; /* REMOVE GLASS EFFECT */
+
+  --theme-display-header-gradient-from: var(--aurora-purple);
+  --theme-display-header-gradient-to: var(--aurora-vibrant-pink);
+  --theme-display-header-text: white;
+  --theme-display-header-border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  --theme-display-time-accent-bg: rgba(0,0,0,0.2);
+  --theme-display-time-accent-text: var(--aurora-soft-pink);
+  --theme-display-time-border: 1px solid rgba(255,255,255,0.2);
+
+  --theme-current-queue-card-bg-from: var(--aurora-vibrant-pink);
+  --theme-current-queue-card-bg-to: var(--aurora-purple);
+  --theme-current-queue-card-text: white;
+  --theme-current-queue-card-box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+  --theme-current-queue-indicator-text: var(--aurora-soft-pink);
+  --theme-current-queue-indicator-bell-bg: white;
+  --theme-current-queue-indicator-bell-icon: var(--aurora-vibrant-pink);
+
+  --theme-waiting-list-bg: transparent;
+  --theme-list-heading-text-color: var(--aurora-dark-text); /* On the lighter right panel */
+
+  --theme-list-item-bg: white; /* Solid white for list items on light right panel */
+  --theme-list-item-text-color: var(--aurora-deep-purple);
+  --theme-list-item-border: 1px solid rgba(126, 34, 206, 0.2); /* Subtle purple border */
+  --theme-list-item-hover-bg: #e9d5ff; /* Violet 200 for hover on list items */
+
+  --theme-alert-skipped-bg: #fff1f2; /* Pink 50 */
+  --theme-alert-skipped-border: #f472b6; /* Pink 400 */
+  --theme-alert-skipped-text: #be185d; /* Pink 700 */
+
+  --theme-text-on-dark: var(--aurora-light-text);
+}
+
+@keyframes auroraGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes blobAnimation1 {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  25% { transform: translate(20px, -30px) scale(1.1) rotate(45deg); border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%; }
+  50% { transform: translate(-10px, 20px) scale(0.9) rotate(90deg); border-radius: 70% 30% 30% 70% / 60% 70% 30% 30%; }
+  75% { transform: translate(30px, 10px) scale(1.05) rotate(135deg); border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%; }
+}
+
+@keyframes blobAnimation2 {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 60% 40% 30% 70% / 70% 30% 70% 30%; }
+  25% { transform: translate(-25px, 15px) scale(0.95) rotate(-30deg); border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%; }
+  50% { transform: translate(15px, -20px) scale(1.15) rotate(60deg); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  75% { transform: translate(-10px, 25px) scale(1) rotate(-60deg); border-radius: 50% 50% 30% 70% / 40% 60% 40% 60%; }
+}
+
+body {
+  background: linear-gradient(-45deg, var(--aurora-deep-purple), var(--aurora-purple), var(--aurora-vibrant-pink), var(--aurora-lilac), var(--aurora-purple));
+  background-size: 400% 400%;
+  animation: auroraGradient 25s ease infinite;
+  color: var(--aurora-light-text); /* Default text color for body */
+  position: relative;
+  overflow: hidden; /* Prevent blobs from causing scroll */
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed; /* Use fixed to keep them in viewport during scroll */
+  z-index: -1; /* Behind content */
+  opacity: 0.3;
+  filter: blur(50px); /* Soften the blobs */
+}
+
+body::before {
+  width: 30vw;
+  height: 30vw;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 400px;
+  max-height: 400px;
+  background: radial-gradient(circle, var(--aurora-vibrant-pink), transparent 70%);
+  top: 10vh;
+  left: 10vw;
+  animation: blobAnimation1 20s infinite alternate ease-in-out;
+}
+
+body::after {
+  width: 35vw;
+  height: 35vw;
+  min-width: 250px;
+  min-height: 250px;
+  max-width: 450px;
+  max-height: 450px;
+  background: radial-gradient(circle, var(--aurora-lilac), transparent 70%);
+  bottom: 15vh;
+  right: 15vw;
+  animation: blobAnimation2 25s infinite alternate ease-in-out;
+  animation-delay: -5s; /* Offset animation */
+}
+
+.theme-card {
+  background-color: var(--theme-card-bg);
+  backdrop-filter: var(--theme-card-backdrop-blur); /* Will be 'none' */
+  -webkit-backdrop-filter: var(--theme-card-backdrop-blur); /* Will be 'none' */
+  border: 1px solid var(--theme-card-border-color);
+  box-shadow: var(--theme-card-shadow);
+  color: var(--aurora-light-text); /* Text on cards */
+}
+
+/* Login form text on the now solid dark card */
+#loginForm input {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--aurora-light-text);
+}
+#loginForm input::placeholder {
+  color: var(--aurora-lilac);
+}
+#loginForm label {
+ color: var(--aurora-soft-pink);
+}
+
+.theme-header {
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur); /* Will be 'none' */
+  -webkit-backdrop-filter: var(--theme-header-backdrop-blur); /* Will be 'none' */
+  color: var(--theme-header-text-color);
+  border-bottom: 1px solid #4a1d70; /* Darker purple border for contrast with deep purple header */
+}
+
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur); /* Will be 'none' */
+  -webkit-backdrop-filter: var(--theme-footer-backdrop-blur); /* Will be 'none' */
+  color: var(--theme-footer-text-color);
+}
+
+.theme-button-primary {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.theme-title-gradient {
+  background-image: linear-gradient(to right, var(--theme-title-gradient-from), var(--theme-title-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.theme-text-default { /* Text on cards */
+    color: var(--aurora-light-text);
+}
+
+.theme-card-inset {
+  background-color: rgba(0,0,0,0.1); /* Darker inset for contrast */
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--aurora-light-text);
+}
+
+/* Dashboard Cards */
+.theme-dashboard-card {
+    color: var(--theme-text-color-on-gradient-cards);
+    padding: 1.5rem;
+    border-radius: 0.75rem; /* Tailwind rounded-xl */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    transition: all 0.3s ease-in-out;
+}
+.theme-dashboard-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15), 0 10px 10px -5px rgba(0,0,0,0.08);
+}
+.theme-dashboard-card p { color: var(--theme-text-muted-on-gradient-cards); margin-bottom: 1rem; }
+.theme-dashboard-card h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+.theme-dashboard-card-button {
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    /* backdrop-filter: blur(3px); */ /* Removed blur from dashboard buttons */
+    font-weight: 600; padding: 0.5rem 1.25rem; border-radius: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.theme-dashboard-card-button:hover { background-color: var(--theme-dashboard-card-button-hover-bg); }
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* Display Page Specifics */
+.theme-interaction-overlay { background-color: var(--theme-interaction-overlay-bg); color: var(--theme-interaction-overlay-text); }
+.theme-panel-left { background-color: var(--theme-panel-left-bg); backdrop-filter: var(--theme-panel-left-backdrop-blur); -webkit-backdrop-filter: var(--theme-panel-left-backdrop-blur); } /* backdrop-filter will be 'none' */
+.theme-panel-right { background-color: var(--theme-panel-right-bg); backdrop-filter: var(--theme-panel-right-backdrop-blur); -webkit-backdrop-filter: var(--theme-panel-right-backdrop-blur); } /* backdrop-filter will be 'none' */
+.theme-display-header { background-image: linear-gradient(to right, var(--theme-display-header-gradient-from), var(--theme-display-header-gradient-to)); color: var(--theme-display-header-text); border-bottom: var(--theme-display-header-border-bottom); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.theme-current-queue-card { background-image: linear-gradient(to bottom right, var(--theme-current-queue-card-bg-from), var(--theme-current-queue-card-bg-to)); color: var(--theme-current-queue-card-text); box-shadow: var(--theme-current-queue-card-box-shadow); }
+@keyframes blink-text-color-aurora { 0%, 100% { color: var(--theme-current-queue-indicator-text); } 50% { color: white; } }
+.theme-current-queue-indicator-text { color: var(--theme-current-queue-indicator-text); animation: blink-text-color-aurora 1.5s infinite; }
+.theme-current-queue-indicator-bell-bg { background-color: var(--theme-current-queue-indicator-bell-bg); }
+.theme-current-queue-indicator-bell-icon { color: var(--theme-current-queue-indicator-bell-icon); }
+.theme-waiting-list-container { background-color: var(--theme-waiting-list-bg); }
+.theme-list-heading svg { color: var(--aurora-purple); } /* General color for list icons */
+.theme-list-heading.waiting svg { color: var(--aurora-vibrant-pink); }
+.theme-list-heading.completed svg { color: var(--aurora-lilac); }
+.theme-list-heading.skipped svg { color: #f59e0b; /* Amber 500 for contrast */ }
+.theme-alert-skipped { background-color: var(--theme-alert-skipped-bg); color: var(--theme-alert-skipped-text); border: 1px solid var(--theme-alert-skipped-border); }
+
+/* User Page Specifics */
+/* Removed #user-page-body .theme-card override to make user page cards consistent with other solid cards */
+#queueNumber.theme-title-gradient { /* Ensure queue number is very prominent */
+  background-image: linear-gradient(to right, var(--aurora-soft-pink), #fff, var(--aurora-lilac));
+}
+
+/* Ensure text in the right panel of display page is readable */
+#display-page-right-panel .theme-list-heading span {
+  color: var(--aurora-dark-text);
+}
+#display-page-right-panel .theme-list-item-bg { /* Example for list items if they are themed */
+  color: var(--aurora-deep-purple);
+}
+
+/* Ensure the main title on the login page is vibrant */
+#loginForm h1.text-3xl {
+    background-image: linear-gradient(to right, var(--aurora-soft-pink), var(--aurora-lilac), var(--aurora-vibrant-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.theme-login-card {
+  background-color: var(--aurora-deep-purple); /* #581c87, different from general theme-card-bg */
+  border: 1px solid var(--aurora-lilac); /* More prominent border */
+  box-shadow: 0 8px 32px 0 rgba(20, 5, 30, 0.3); /* Slightly adjusted shadow */
+  color: var(--aurora-light-text);
+  /* Tailwind classes like rounded-xl, p-8, max-w-md handle sizing and padding */
+}

@@ -1,5 +1,10 @@
 // Global variables
-const SPREADSHEET_ID = '1HjR4tYETYG4gzLz0DSqsoTQbRLbgrkS5Rpm5Mt0DOwc'; // ใส่ ID ของ Google Sheet ใช้เก็บข้อมูล
+// Remove or comment out the old hardcoded SPREADSHEET_ID
+// const SPREADSHEET_ID_OLD = "your_hardcoded_spreadsheet_id_here"; 
+
+// Get SPREADSHEET_ID from Script Properties
+const SPREADSHEET_ID = PropertiesService.getScriptProperties().getProperty('MAIN_SPREADSHEET_ID');
+
 const SHEET_QUEUE = 'Queue';
 const SHEET_COUNTERS = 'Counters';
 const SHEET_USERS = 'Users';
@@ -21,7 +26,8 @@ const SND_COL_ID_IDX = 0;
 const SND_COL_NAME_IDX = 1;
 const SND_COL_LINK_IDX = 2;
 const SND_COL_DESC_IDX = 3; // New: Description
-const SND_COL_TYPE_IDX = 4; // New: Sound Type (e.g., digit_0, start_call, general_purpose)
+const SND_COL_TYPE_IDX = 4; // Sound Type (e.g., digit_0, start_call, general_purpose)
+const SND_COL_SOUND_SET_IDX = 5; // New: SoundSet (e.g., default, male, female)
 
 // Global constants for SlideshowImages sheet column indices
 const SLI_COL_ID_IDX = 0;
@@ -31,6 +37,8 @@ const SLI_COL_DISPLAY_ORDER_IDX = 3;
 const SLI_COL_IS_ACTIVE_IDX = 4;
 // Global constants for Counters sheet column indices
 const CTR_COL_NAMESOUNDID_IDX = 3; // New: NameSoundID (links to Sound sheet ID)
+
+
 
 // Helper function to check for valid dates
 function isValidDate(d) {
@@ -42,23 +50,57 @@ function isValidDate(d) {
 function doGet(e) {
   let template;
   let htmlOutput;
+  let pageTitle = 'ระบบเรียกคิวออนไลน์'; // Default title
+  let activeTheme = 'standard'; // Default theme, fallback
+
+  // Attempt to load the active theme from settings
+  try {
+    const settings = getSettings(); // Assuming getSettings() fetches all settings including ActiveTheme
+    if (settings && settings.ActiveTheme) {
+      activeTheme = settings.ActiveTheme;
+    }
+    Logger.log("Active theme in doGet: " + activeTheme);
+  } catch (err) {
+    Logger.log("Error fetching settings for theme in doGet: " + err.toString() + ". Defaulting to 'standard'.");
+    // activeTheme remains 'standard'
+  }
 
   // ตรวจสอบพารามิเตอร์ 'page' ใน URL
-  if (e && e.parameter && e.parameter.page && e.parameter.page.toLowerCase() === 'display') {
-    template = HtmlService.createTemplateFromFile('display');
-    htmlOutput = template.evaluate();
-    // display.html มี <title> และ viewport meta tag ของตัวเองอยู่แล้ว
-    // สามารถตั้งค่า XFrameOptionsMode เพื่อความสอดคล้องหาก display.html อาจถูกฝัง
-    htmlOutput.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-    // หากต้องการ override title จาก display.html สามารถทำได้ที่นี่ เช่น
-    // htmlOutput.setTitle('หน้าจอแสดงผลคิว'); 
+  if (e && e.parameter && e.parameter.page) {
+    const pageParam = e.parameter.page.toLowerCase();
+    if (pageParam === 'display-page') { // Changed from 'display'
+      template = HtmlService.createTemplateFromFile('display-page'); // Changed from 'display'
+    } else if (pageParam === 'user-page') {
+      template = HtmlService.createTemplateFromFile('user-page'); // New HTML file
+      pageTitle = 'หน้าจองคิวผู้ใช้บริการ'; // Specific title for this page
+    } else {
+      // Default to index.html for SPA or unknown pages
+      template = HtmlService.createTemplateFromFile('index');
+    }
   } else {
     // ค่าเริ่มต้นคือ index.html สำหรับ Single Page Application (SPA)
     template = HtmlService.createTemplateFromFile('index');
-    htmlOutput = template.evaluate();
-    htmlOutput.setTitle('ระบบเรียกคิวออนไลน์')
+  }
+
+  // Pass the activeTheme to the template *before* evaluating it
+  template.activeTheme = activeTheme;
+  htmlOutput = template.evaluate();
+
+  // Set title and meta tags after evaluation
+  // This ensures pageTitle is correctly set for user-page
+  if (e && e.parameter && e.parameter.page && e.parameter.page.toLowerCase() === 'user-page') {
+    htmlOutput.setTitle(pageTitle) // pageTitle for user-page
       .addMetaTag('viewport', 'width=device-width, initial-scale=1')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  } else if (!e || !e.parameter || !e.parameter.page || e.parameter.page.toLowerCase() !== 'display-page') {
+    // This covers index.html (default case or explicit) and other potential pages not 'display-page'
+    htmlOutput.setTitle(pageTitle)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+  // For display-page, XFrameOptionsMode is set, title is handled by the page itself.
+  if (e && e.parameter && e.parameter.page && e.parameter.page.toLowerCase() === 'display-page') {
+      htmlOutput.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
   return htmlOutput;
 }
@@ -68,10 +110,16 @@ function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
+
 // ฟังก์ชันสำหรับเริ่มต้นระบบ (initialize)
 function initializeSystem() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   
+  if (!SPREADSHEET_ID) {
+    console.error("MAIN_SPREADSHEET_ID is not set in Script Properties. Please go to Project Settings > Script Properties to set it.");
+    // You might want to throw an error or return a specific error object to the client
+    throw new Error("System configuration error: MAIN_SPREADSHEET_ID is missing.");
+  }
   // สร้าง Sheet ถ้ายังไม่มี
   if (!ss.getSheetByName(SHEET_QUEUE)) {
     const queueSheet = ss.insertSheet(SHEET_QUEUE);
@@ -106,8 +154,11 @@ function initializeSystem() {
       'AutoPrintEnabled': 'disabled',
       'TicketWidth': '80', // mm
       'TicketHeight': '150', // mm
-      'SlideshowInterval': '7',
-      'SlideshowTransition': 'fade'
+      'SlideshowInterval': '7', // seconds
+      'SlideshowTransition': 'fade',
+      'SoundGenerationMethod': 'url', // Default sound generation method
+      'ActiveSoundSet': 'madamdear', 
+      'ActiveTheme': 'standard' 
     };
     for (const key in defaultSettings) {
       settingsSheet.appendRow([key, defaultSettings[key]]);
@@ -128,8 +179,11 @@ function initializeSystem() {
       'AutoPrintEnabled': 'disabled',
       'TicketWidth': '80',
       'TicketHeight': '150',
-      'SlideshowInterval': '7',
-      'SlideshowTransition': 'fade'
+      'SlideshowInterval': '7', // seconds
+      'SlideshowTransition': 'fade',
+      'SoundGenerationMethod': 'url', // Default sound generation method
+      'ActiveSoundSet': 'madamdear',    
+      'ActiveTheme': 'standard'     
     };
 
     for (const key in defaultSettings) {
@@ -172,22 +226,22 @@ function initializeSystem() {
   if (!ss.getSheetByName(SHEET_SOUND)) {
     const soundSheet = ss.insertSheet(SHEET_SOUND);
     // Corrected: use soundSheet instead of userSheet for appending sound data
-    soundSheet.appendRow(['id', 'nameSound', 'linkSound', 'description', 'soundType']);
-    soundSheet.appendRow(['1', 'เสียงเลข 0', 'https://weerasak3s.github.io/media/0-0.mp3', 'เสียงสำหรับเลขศูนย์', 'digit_0']);
-    soundSheet.appendRow(['2', 'เสียงเลข 1', 'https://weerasak3s.github.io/media/1-1.mp3', 'เสียงสำหรับเลขหนึ่ง', 'digit_1']);
-    soundSheet.appendRow(['3', 'เสียงเลข 2', 'https://weerasak3s.github.io/media/2-2.mp3', 'เสียงสำหรับเลขสอง', 'digit_2']);
-    soundSheet.appendRow(['4', 'เสียงเลข 3', 'https://weerasak3s.github.io/media/3-3.mp3', 'เสียงสำหรับเลขสาม', 'digit_3']);
-    soundSheet.appendRow(['5', 'เสียงเลข 4', 'https://weerasak3s.github.io/media/4-4.mp3', 'เสียงสำหรับเลขสี่', 'digit_4']);
-    soundSheet.appendRow(['6', 'เสียงเลข 5', 'https://weerasak3s.github.io/media/5-5.mp3', 'เสียงสำหรับเลขห้า', 'digit_5']);
-    soundSheet.appendRow(['7', 'เสียงเลข 6', 'https://weerasak3s.github.io/media/6-6.mp3', 'เสียงสำหรับเลขหก', 'digit_6']);
-    soundSheet.appendRow(['8', 'เสียงเลข 7', 'https://weerasak3s.github.io/media/7-7.mp3', 'เสียงสำหรับเลขเจ็ด', 'digit_7']);
-    soundSheet.appendRow(['9', 'เสียงเลข 8', 'https://weerasak3s.github.io/media/8-8.mp3', 'เสียงสำหรับเลขแปด', 'digit_8']);
-    soundSheet.appendRow(['10', 'เสียงเลข 9', 'https://weerasak3s.github.io/media/9-09.mp3', 'เสียงสำหรับเลขเก้า', 'digit_9']);
-    soundSheet.appendRow(['11', 'เสียงเชิญหมายเลข (เริ่มต้น)', 'https://weerasak3s.github.io/media/10-start.mp3', 'เสียงนำเมื่อเริ่มเรียกคิว', 'start_call']);
-    soundSheet.appendRow(['12', 'เสียงเชิญช่องบริการ (สิ้นสุด)', 'https://weerasak3s.github.io/media/11-end.mp3', 'เสียงปิดท้ายเมื่อระบุช่องบริการ (กรณีช่องเดียว หรือไม่มีเสียงชื่อช่อง)', 'end_call']);
-    soundSheet.appendRow(['13', 'เสียง "ที่ช่องบริการ"', 'https://example.com/placeholder_counter_prefix.mp3', 'เสียงพูดว่า "ที่ช่องบริการ" ก่อนบอกหมายเลขช่อง', 'counter_prefix']);
+    soundSheet.appendRow(['id', 'nameSound', 'linkSound', 'description', 'soundType', 'SoundSet']); // Added SoundSet
+    soundSheet.appendRow(['1', 'เสียงเลข 0', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/0.mp3', 'เสียงสำหรับเลขศูนย์', 'digit_0', 'madamdear']);
+    soundSheet.appendRow(['2', 'เสียงเลข 1', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/1.mp3', 'เสียงสำหรับเลขหนึ่ง', 'digit_1', 'madamdear']);
+    soundSheet.appendRow(['3', 'เสียงเลข 2', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/2.mp3', 'เสียงสำหรับเลขสอง', 'digit_2', 'madamdear']);
+    soundSheet.appendRow(['4', 'เสียงเลข 3', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/3.mp3', 'เสียงสำหรับเลขสาม', 'digit_3', 'madamdear']);
+    soundSheet.appendRow(['5', 'เสียงเลข 4', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/4.mp3', 'เสียงสำหรับเลขสี่', 'digit_4', 'madamdear']);
+    soundSheet.appendRow(['6', 'เสียงเลข 5', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/5.mp3', 'เสียงสำหรับเลขห้า', 'digit_5', 'madamdear']);
+    soundSheet.appendRow(['7', 'เสียงเลข 6', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/6.mp3', 'เสียงสำหรับเลขหก', 'digit_6', 'madamdear']);
+    soundSheet.appendRow(['8', 'เสียงเลข 7', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/7.mp3', 'เสียงสำหรับเลขเจ็ด', 'digit_7', 'madamdear']);
+    soundSheet.appendRow(['9', 'เสียงเลข 8', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/8.mp3', 'เสียงสำหรับเลขแปด', 'digit_8', 'madamdear']);
+    soundSheet.appendRow(['10', 'เสียงเลข 9', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/9.mp3', 'เสียงสำหรับเลขเก้า', 'digit_9', 'madamdear']);
+    soundSheet.appendRow(['11', 'เสียงเชิญหมายเลข (เริ่มต้น)', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/Invite-number.mp3', 'เสียงนำเมื่อเริ่มเรียกคิว', 'start_call', 'madamdear']);
+    soundSheet.appendRow(['12', 'เสียงเชิญช่องบริการ (สิ้นสุด)', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/at-the-service-channel.mp3', 'เสียงปิดท้ายเมื่อระบุช่องบริการ (กรณีช่องเดียว หรือไม่มีเสียงชื่อช่อง)', 'end_call', 'madamdear']);
+    soundSheet.appendRow(['13', 'เสียง "ที่ช่องบริการ"', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/channel.mp3', 'เสียงพูดว่า "ที่ช่องบริการ" ก่อนบอกหมายเลขช่อง', 'counter_prefix', 'madamdear']);
     // Example for a counter name sound
-    soundSheet.appendRow(['100', 'เสียงห้องตรวจโรค', 'https://example.com/placeholder_examination_room.mp3', 'เสียงสำหรับ "ห้องตรวจโรค"', 'general_purpose']);
+    soundSheet.appendRow(['100', 'เสียงห้องตรวจโรค', 'https://banhanhealth.github.io/Queue-calling/media/sounds/madamdear/examination_room.mp3', 'เสียงสำหรับ "ห้องตรวจโรค"', 'general_purpose', 'madamdear']);
   
   }
   
@@ -195,9 +249,10 @@ function initializeSystem() {
     const slideshowSheet = ss.insertSheet(SHEET_SLIDESHOW_IMAGES);
     slideshowSheet.appendRow(['ID', 'ImageURL', 'Title', 'DisplayOrder', 'IsActive']);
     // Add some default/example images
-    slideshowSheet.appendRow([1, 'https://banhanhealth.github.io/Queue-calll/media/images/test/image1.jpg', 'ตัวอย่างภาพที่ 1', 1, true]);
-    slideshowSheet.appendRow([2, 'https://banhanhealth.github.io/Queue-calll/media/images/test/image2.jpg', 'ตัวอย่างภาพที่ 2', 2, true]);
-    slideshowSheet.appendRow([3, 'https://banhanhealth.github.io/Queue-calll/media/images/test/image3.jpg', 'ตัวอย่างภาพที่ 3', 3, true]);
+    slideshowSheet.appendRow([1, 'https://banhanhealth.github.io/Queue-calling/media/images/test/image1.jpg', 'ตัวอย่างภาพที่ 1', 1, true]);
+    slideshowSheet.appendRow([2, 'https://banhanhealth.github.io/Queue-calling/media/images/test/image2.jpg', 'ตัวอย่างภาพที่ 2', 2, true]);
+    slideshowSheet.appendRow([3, 'https://banhanhealth.github.io/Queue-calling/media/images/test/image3.jpg', 'ตัวอย่างภาพที่ 3', 3, true]);
+     slideshowSheet.appendRow([4, 'https://banhanhealth.github.io/Queue-calling/media/images/test/image4.jpg', 'ตัวอย่างภาพที่ 4', 4, true]);
   }
 
   return "ระบบถูกเริ่มต้นเรียบร้อยแล้ว";
@@ -418,6 +473,18 @@ function getAdminDashboardData() {
             }
         }
         }
+
+    // Get SoundGenerationMethod from settings (already in displayPageSettings, but let's be explicit for clarity or if needed separately)
+    // Or, more directly, use the value from displayPageSettings if it's reliably populated there.
+    let soundGenMethod = displayPageSettings.SoundGenerationMethod || 'url'; // Default to 'url'
+    // Ensure it's one of the valid values, otherwise default to 'url'
+    const validSoundMethods = ['url', 'web_speech', 'google_cloud_tts'];
+    if (!validSoundMethods.includes(soundGenMethod)) {
+        Logger.log(`Invalid SoundGenerationMethod '${soundGenMethod}' found in settings. Defaulting to 'url'.`);
+        soundGenMethod = 'url';
+    }
+
+
     // Fetch announcement config
     const announcementConfigData = announcementConfigSheet.getDataRange().getValues();
      let activeAnnouncementPattern = 'SOUND_TYPE_START_CALL,{QUEUE_NUMBER},SOUND_TYPE_COUNTER_PREFIX,{COUNTER_NUMBER}'; // Fallback
@@ -618,7 +685,8 @@ function getAdminDashboardData() {
       // Include display settings
       DisplayType: displayPageSettings.DisplayType || (slideshowImagesResult.data && slideshowImagesResult.data.length > 0 ? 'slideshow' : 'video'),
       SlideshowInterval: displayPageSettings.SlideshowInterval || 7,
-      SlideshowTransition: displayPageSettings.SlideshowTransition || 'fade'
+      SlideshowTransition: displayPageSettings.SlideshowTransition || 'fade',
+      SoundGenerationMethod: soundGenMethod // ***** ADD THIS LINE *****
     };
   } catch (e) {
     Logger.log("CRITICAL ERROR in getAdminDashboardData: " + e.toString() + " Stack: " + e.stack);
@@ -638,7 +706,8 @@ function getAdminDashboardData() {
         counterAnnouncementType: 'number', // Fallback
         DisplayType: 'video', // Default to video on error
         SlideshowInterval: 7, // Default to 7 seconds
-        SlideshowTransition: 'fade' // Default to fade transition
+        SlideshowTransition: 'fade', // Default to fade transition
+        SoundGenerationMethod: 'url' // ***** ADD THIS LINE (default on error) *****
     };
   } finally {
     // This log helps identify which execution of getAdminDashboardData we are looking at
@@ -910,10 +979,17 @@ function getSoundUrls() {
     const soundSheet = ss.getSheetByName(SHEET_SOUND);
     if (!soundSheet) {
       Logger.log("Sound sheet not found.");
-      return { error: "Sound sheet not found.", digits: {}, types: {}, rawById: {} };
+      return { success: false, error: "Sound sheet not found.", digits: {}, types: {}, rawById: {} };
     }
+
+    // Get active sound set from settings
+    const settings = getSettings(); // Assuming getSettings() is reliable and fetches all settings
+    const activeSoundSet = settings.ActiveSoundSet || 'madamdear'; // Default to 'madamdear' if not set
+    Logger.log("Active Sound Set: " + activeSoundSet);
+
     const data = soundSheet.getDataRange().getValues();
     const soundMap = {
+      success: true, // Indicate success
       digits: {},      // For 'digit_0', 'digit_1', ...
       types: {},       // For 'start_call', 'end_call', 'counter_prefix', ...
       rawById: {}      // For direct lookup by sound ID, e.g. for counter name sounds
@@ -923,30 +999,35 @@ function getSoundUrls() {
       const soundId = data[i][SND_COL_ID_IDX] ? data[i][SND_COL_ID_IDX].toString().trim() : null;
       const linkSound = data[i][SND_COL_LINK_IDX] ? data[i][SND_COL_LINK_IDX].toString().trim() : "";
       const soundType = data[i][SND_COL_TYPE_IDX] ? data[i][SND_COL_TYPE_IDX].toString().trim().toLowerCase() : "";
+      const currentSoundSet = data[i][SND_COL_SOUND_SET_IDX] ? data[i][SND_COL_SOUND_SET_IDX].toString().trim() : "";
 
-      if (soundId && linkSound && soundType) {
-        soundMap.rawById[soundId] = linkSound; // Always map by ID
+      // Only process sounds belonging to the active sound set
+      if (currentSoundSet === activeSoundSet) {
+        if (soundId && linkSound && soundType) {
+          soundMap.rawById[soundId] = linkSound; // Map by ID for the active set
 
-        if (soundType.startsWith("digit_")) {
-          const digit = soundType.replace("digit_", "");
-          soundMap.digits[digit] = linkSound;
-        } else if (soundType === "start_call" || 
-                   soundType === "end_call" || 
-                   soundType === "counter_prefix" /* add other specific types here */) {
-          soundMap.types[soundType] = linkSound;
-        }
-        // 'general_purpose' sounds are available via rawById
-      } else {
-        if (i > 0 && (data[i][SND_COL_ID_IDX] || data[i][SND_COL_NAME_IDX])) { // Log if it looks like a data row but is incomplete
-            Logger.log(`Skipping sound row ${i+1} due to missing ID, link, or type. ID: ${soundId}, Link: ${linkSound}, Type: ${soundType}`);
+          if (soundType.startsWith("digit_")) {
+            const digit = soundType.replace("digit_", "");
+            soundMap.digits[digit] = linkSound;
+          } else if (soundType === "start_call" ||
+                     soundType === "end_call" ||
+                     soundType === "counter_prefix" /* add other specific types here */) {
+            soundMap.types[soundType] = linkSound;
+          }
+          // 'general_purpose' sounds are available via rawById
+        } else {
+          if (i > 0 && (data[i][SND_COL_ID_IDX] || data[i][SND_COL_NAME_IDX])) { // Log if it looks like a data row but is incomplete
+              Logger.log(`Skipping sound row ${i+1} in set '${currentSoundSet}' due to missing ID, link, or type. ID: ${soundId}, Link: ${linkSound}, Type: ${soundType}`);
+          }
         }
       }
     }
     // Fallback for old keys if new types are not yet fully adopted or for backward compatibility during transition
     // This part can be removed once soundType is consistently used.
-    if (!soundMap.types.start_call && soundMap.rawById['11']) soundMap.types.start_call = soundMap.rawById['11']; // Assuming ID 11 was 'start'
-    if (!soundMap.types.end_call && soundMap.rawById['12']) soundMap.types.end_call = soundMap.rawById['12'];     // Assuming ID 12 was 'end'
-    if (!soundMap.types.counter_prefix && soundMap.rawById['13']) soundMap.types.counter_prefix = soundMap.rawById['13']; // Assuming ID 13 was 'counter_prefix'
+    // Ensure these fallbacks also respect the activeSoundSet by checking if rawById[key] was populated (meaning it's in the active set)
+    if (!soundMap.types.start_call && soundMap.rawById['11']) soundMap.types.start_call = soundMap.rawById['11'];
+    if (!soundMap.types.end_call && soundMap.rawById['12']) soundMap.types.end_call = soundMap.rawById['12'];
+    if (!soundMap.types.counter_prefix && soundMap.rawById['13']) soundMap.types.counter_prefix = soundMap.rawById['13'];
 
     Logger.log("Sound map created: " + JSON.stringify(soundMap));
     return soundMap;
@@ -1319,7 +1400,8 @@ function getAllSoundData() {
           nameSound: data[i][SND_COL_NAME_IDX].toString().trim(),
           linkSound: data[i][SND_COL_LINK_IDX] ? data[i][SND_COL_LINK_IDX].toString().trim() : "",
           description: data[i][SND_COL_DESC_IDX] ? data[i][SND_COL_DESC_IDX].toString().trim() : "",
-          soundType: data[i][SND_COL_TYPE_IDX] ? data[i][SND_COL_TYPE_IDX].toString().trim() : "general_purpose"
+          soundType: data[i][SND_COL_TYPE_IDX] ? data[i][SND_COL_TYPE_IDX].toString().trim() : "general_purpose",
+          soundSet: data[i][SND_COL_SOUND_SET_IDX] ? data[i][SND_COL_SOUND_SET_IDX].toString().trim() : "default" // Added soundSet
       
         });
       }
@@ -1331,7 +1413,7 @@ function getAllSoundData() {
   }
 }
 
-function addSoundData(nameSound, linkSound, description, soundType) {
+function addSoundData(nameSound, linkSound, description, soundType, soundSet) { // Added soundSet
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const soundSheet = ss.getSheetByName(SHEET_SOUND);
@@ -1353,16 +1435,16 @@ function addSoundData(nameSound, linkSound, description, soundType) {
     // If only header, lastRow is 1, nextId becomes 1.
     // If header + 1 data row with ID 1, nextId becomes 2.
 
-    soundSheet.appendRow([nextId.toString(), nameSound, linkSound, description, soundType]);
-    Logger.log(`Added sound: ID=${nextId}, Name=${nameSound}, Description=${description}, Type=${soundType}`);
-    return { success: true, message: "เพิ่มข้อมูลเสียงสำเร็จ", newSound: {id: nextId.toString(), nameSound: nameSound, linkSound: linkSound, description: description, soundType: soundType } };
+    soundSheet.appendRow([nextId.toString(), nameSound, linkSound, description, soundType, soundSet || 'default']); // Added soundSet
+    Logger.log(`Added sound: ID=${nextId}, Name=${nameSound}, Type=${soundType}, Set=${soundSet}`);
+    return { success: true, message: "เพิ่มข้อมูลเสียงสำเร็จ", newSound: {id: nextId.toString(), nameSound: nameSound, linkSound: linkSound, description: description, soundType: soundType, soundSet: soundSet || 'default' } };
   } catch (e) {
     Logger.log("Error in addSoundData: " + e.toString() + " Stack: " + e.stack);
     return { success: false, message: "เกิดข้อผิดพลาดในการเพิ่มข้อมูลเสียง: " + e.message };
   }
 }
 
-function updateSoundData(id, nameSound, linkSound, description, soundType) {
+function updateSoundData(id, nameSound, linkSound, description, soundType, soundSet) { // Added soundSet
   
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1376,8 +1458,9 @@ function updateSoundData(id, nameSound, linkSound, description, soundType) {
         soundSheet.getRange(i + 1, SND_COL_LINK_IDX + 1).setValue(linkSound);
         soundSheet.getRange(i + 1, SND_COL_DESC_IDX + 1).setValue(description);
         soundSheet.getRange(i + 1, SND_COL_TYPE_IDX + 1).setValue(soundType);
-        Logger.log(`Updated sound: ID=${id}, Name=${nameSound}, Desc=${description}, Type=${soundType}`);
-        return { success: true, message: "อัปเดตข้อมูลเสียงสำเร็จ", updatedSound: {id: id, nameSound: nameSound, linkSound: linkSound, description: description, soundType: soundType } };
+        soundSheet.getRange(i + 1, SND_COL_SOUND_SET_IDX + 1).setValue(soundSet); // Added soundSet
+        Logger.log(`Updated sound: ID=${id}, Name=${nameSound}, Type=${soundType}, Set=${soundSet}`);
+        return { success: true, message: "อัปเดตข้อมูลเสียงสำเร็จ", updatedSound: {id: id, nameSound: nameSound, linkSound: linkSound, description: description, soundType: soundType, soundSet: soundSet } };
      }
     }
     Logger.log(`Sound ID not found for update: ${id}`);
@@ -1410,6 +1493,29 @@ function deleteSoundData(id) {
   }
 }
 
+// Function to get available sound sets from the Sound sheet
+function getAvailableSoundSets() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const soundSheet = ss.getSheetByName(SHEET_SOUND);
+    if (!soundSheet) {
+      Logger.log("Sound sheet not found in getAvailableSoundSets.");
+      return { success: false, message: "ไม่พบชีท Sound", data: [] };
+    }
+    const data = soundSheet.getRange(2, SND_COL_SOUND_SET_IDX + 1, Math.max(1, soundSheet.getLastRow() -1), 1).getValues();
+    const soundSets = new Set();
+    data.forEach(row => {
+      if (row[0] && row[0].toString().trim() !== "") {
+        soundSets.add(row[0].toString().trim());
+      }
+    });
+    Logger.log("Available sound sets: " + Array.from(soundSets));
+    return { success: true, data: Array.from(soundSets) };
+  } catch (e) {
+    Logger.log("Error in getAvailableSoundSets: " + e.toString());
+    return { success: false, message: "Server error fetching sound sets: " + e.message, data: [] };
+  }
+}
 // ... (rest of existing Code.js) ...
 // ฟังก์ชันสำหรับดึงข้อมูลช่องบริการทั้งหมดสำหรับหน้า Admin
 function getAllCountersAdmin() {
@@ -1503,3 +1609,5 @@ function deleteCounter(id) {
     return { success: false, message: "เกิดข้อผิดพลาดในการลบช่องบริการ: " + e.message };
   }
 }
+
+

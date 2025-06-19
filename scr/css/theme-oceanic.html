@@ -1,0 +1,254 @@
+/* Oceanic Theme - ธีมสีขาวสะอาดตา เน้นโทนสีน้ำเงิน-ฟ้า */
+:root {
+  /* Color Palette */
+  --oceanic-deep-blue: #0d47a1;   /* Blue 900 */
+  --oceanic-medium-blue: #1976d2; /* Blue 700 */
+  --oceanic-light-blue: #42a5f5;  /* Blue 400 */
+  --oceanic-sky-blue: #bbdefb;    /* Blue 100 */
+  --oceanic-pale-blue: #e3f2fd;   /* Blue 50 */
+  --oceanic-white: #ffffff;
+  --oceanic-light-gray: #f5f5f5; /* Gray 100 */
+  --oceanic-medium-gray: #e0e0e0; /* Gray 300 */
+  --oceanic-dark-gray: #757575;   /* Gray 600 */
+  --oceanic-text-dark: #212121;   /* Gray 900 */
+  --oceanic-text-light: #ffffff;
+
+  /* Theme Variables */
+  --theme-bg-gradient-from: var(--oceanic-white); /* Solid white background */
+  --theme-bg-gradient-to: var(--oceanic-white);
+
+  /* Cards */
+  --theme-card-bg: var(--oceanic-white);
+  --theme-card-backdrop-blur: none;
+  --theme-card-border-color: var(--oceanic-medium-gray);
+  --theme-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Login Card Specifics */
+  --theme-login-card-bg: var(--oceanic-white);
+  --theme-login-card-border-color: var(--oceanic-light-blue);
+  --theme-login-card-shadow: 0 6px 18px rgba(66, 165, 245, 0.2);
+
+  /* Header */
+  --theme-header-bg: var(--oceanic-medium-blue);
+  --theme-header-backdrop-blur: none;
+  --theme-header-text-color: var(--oceanic-text-light);
+
+  /* Footer */
+  --theme-footer-bg: var(--oceanic-light-gray);
+  --theme-footer-backdrop-blur: none;
+  --theme-footer-text-color: var(--oceanic-dark-gray);
+
+  /* Buttons */
+  --theme-button-primary-gradient-from: var(--oceanic-medium-blue);
+  --theme-button-primary-gradient-to: var(--oceanic-light-blue);
+  --theme-button-primary-hover-gradient-from: var(--oceanic-light-blue);
+  --theme-button-primary-hover-gradient-to: var(--oceanic-medium-blue);
+  --theme-button-primary-text-color: var(--oceanic-text-light);
+
+  /* Titles & Text */
+  --theme-title-gradient-from: var(--oceanic-deep-blue); /* Solid color for titles */
+  --theme-title-gradient-to: var(--oceanic-deep-blue);
+  --theme-text-color-default: var(--oceanic-text-dark); /* Default text on cards/body */
+  --theme-text-color-on-gradient-cards: var(--oceanic-text-light); /* For dashboard cards */
+  --theme-text-muted-on-gradient-cards: var(--oceanic-sky-blue);
+
+  /* Dashboard Cards */
+  --theme-dashboard-card1-from: var(--oceanic-deep-blue);
+  --theme-dashboard-card1-to: var(--oceanic-medium-blue);
+  --theme-dashboard-card2-from: var(--oceanic-medium-blue);
+  --theme-dashboard-card2-to: var(--oceanic-light-blue);
+  --theme-dashboard-card3-from: var(--oceanic-light-blue);
+  --theme-dashboard-card3-to: var(--oceanic-sky-blue); /* Text on this should be dark */
+  --theme-dashboard-card4-from: var(--oceanic-sky-blue); /* Text on this should be dark */
+  --theme-dashboard-card4-to: var(--oceanic-pale-blue);  /* Text on this should be dark */
+
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.2);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.3);
+  --theme-dashboard-card-button-text-color: var(--oceanic-text-light);
+
+  /* Display Page */
+  --theme-interaction-overlay-bg: rgba(13, 71, 161, 0.9); /* Deep blue, semi-transparent */
+  --theme-interaction-overlay-text: var(--oceanic-text-light);
+
+  --theme-panel-left-bg: var(--oceanic-deep-blue);
+  --theme-panel-left-backdrop-blur: none;
+  --theme-panel-right-bg: var(--oceanic-white);
+  --theme-panel-right-backdrop-blur: none;
+
+  --theme-display-header-gradient-from: var(--oceanic-medium-blue);
+  --theme-display-header-gradient-to: var(--oceanic-light-blue);
+  --theme-display-header-text: var(--oceanic-text-light);
+  --theme-display-header-border-bottom: 1px solid var(--oceanic-sky-blue);
+
+  --theme-display-time-accent-bg: var(--oceanic-pale-blue);
+  --theme-display-time-accent-text: var(--oceanic-deep-blue);
+  --theme-display-time-border: 1px solid var(--oceanic-sky-blue);
+
+  --theme-current-queue-card-bg-from: var(--oceanic-medium-blue);
+  --theme-current-queue-card-bg-to: var(--oceanic-light-blue);
+  --theme-current-queue-card-text: var(--oceanic-text-light);
+  --theme-current-queue-card-box-shadow: 0 8px 20px rgba(25, 118, 210, 0.25);
+
+  --theme-current-queue-indicator-text: var(--oceanic-sky-blue);
+  --theme-current-queue-indicator-bell-bg: var(--oceanic-white);
+  --theme-current-queue-indicator-bell-icon: var(--oceanic-medium-blue);
+
+  --theme-waiting-list-bg: transparent;
+  --theme-list-heading-text-color: var(--oceanic-deep-blue); /* On the white right panel */
+
+  --theme-list-item-bg: var(--oceanic-pale-blue);
+  --theme-list-item-text-color: var(--oceanic-deep-blue);
+  --theme-list-item-border: 1px solid var(--oceanic-sky-blue);
+  --theme-list-item-hover-bg: var(--oceanic-sky-blue);
+
+  --theme-alert-skipped-bg: #fff3e0; /* Orange 50 */
+  --theme-alert-skipped-border: #ffb74d; /* Orange 300 */
+  --theme-alert-skipped-text: #e65100; /* Orange 900 */
+
+  --theme-text-on-dark: var(--oceanic-text-light);
+}
+
+body {
+  background-color: var(--theme-bg-gradient-from); /* Solid white */
+  color: var(--theme-text-color-default);
+}
+
+.theme-card {
+  background-color: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border-color);
+  box-shadow: var(--theme-card-shadow);
+  color: var(--theme-text-color-default);
+}
+
+.theme-login-card {
+  background-color: var(--theme-login-card-bg);
+  border: 1px solid var(--theme-login-card-border-color);
+  box-shadow: var(--theme-login-card-shadow);
+  color: var(--theme-text-color-default);
+}
+
+/* Login form specific styles */
+#loginForm h1.text-3xl { /* Tailwind class for "ระบบเรียกคิวออนไลน์" */
+  background-image: linear-gradient(to right, var(--oceanic-deep-blue), var(--oceanic-medium-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+#loginForm input {
+  background-color: var(--oceanic-white);
+  border-color: var(--oceanic-medium-gray);
+  color: var(--oceanic-text-dark);
+}
+#loginForm input::placeholder {
+  color: var(--oceanic-dark-gray);
+}
+#loginForm label {
+ color: var(--oceanic-medium-blue);
+}
+
+.theme-header {
+  background-color: var(--theme-header-bg);
+  color: var(--theme-header-text-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  color: var(--theme-footer-text-color);
+  border-top: 1px solid var(--oceanic-medium-gray);
+}
+
+.theme-button-primary {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-title-gradient { /* Solid color for this theme */
+  color: var(--theme-title-gradient-from);
+}
+
+.theme-text-default {
+    color: var(--theme-text-color-default);
+}
+
+.theme-card-inset {
+  background-color: var(--oceanic-pale-blue);
+  border: 1px solid var(--oceanic-sky-blue);
+  color: var(--theme-text-color-default);
+}
+
+/* Dashboard Cards */
+.theme-dashboard-card {
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.07);
+    transition: all 0.3s ease-in-out;
+}
+.theme-dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.theme-dashboard-card p { margin-bottom: 1rem; }
+.theme-dashboard-card h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+
+.theme-dashboard-card-1, .theme-dashboard-card-2 { color: var(--theme-text-color-on-gradient-cards); }
+.theme-dashboard-card-1 p, .theme-dashboard-card-2 p { color: var(--theme-text-muted-on-gradient-cards); }
+.theme-dashboard-card-3, .theme-dashboard-card-4 { color: var(--oceanic-deep-blue); } /* Dark text for lighter cards */
+.theme-dashboard-card-3 p, .theme-dashboard-card-4 p { color: var(--oceanic-medium-blue); }
+
+.theme-dashboard-card-button {
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    font-weight: 600; padding: 0.5rem 1.25rem; border-radius: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+.theme-dashboard-card-button:hover { background-color: var(--theme-dashboard-card-button-hover-bg); }
+
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* Display Page Specifics */
+.theme-interaction-overlay { background-color: var(--theme-interaction-overlay-bg); color: var(--theme-interaction-overlay-text); }
+.theme-panel-left { background-color: var(--theme-panel-left-bg); }
+.theme-panel-right { background-color: var(--theme-panel-right-bg); }
+.theme-display-header { background-image: linear-gradient(to right, var(--theme-display-header-gradient-from), var(--theme-display-header-gradient-to)); color: var(--theme-display-header-text); border-bottom: var(--theme-display-header-border-bottom); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.theme-current-queue-card { background-image: linear-gradient(to bottom right, var(--theme-current-queue-card-bg-from), var(--theme-current-queue-card-bg-to)); color: var(--theme-current-queue-card-text); box-shadow: var(--theme-current-queue-card-box-shadow); }
+@keyframes blink-text-color-oceanic { 0%, 100% { color: var(--theme-current-queue-indicator-text); } 50% { color: var(--oceanic-white); } }
+.theme-current-queue-indicator-text { color: var(--theme-current-queue-indicator-text); animation: blink-text-color-oceanic 1.5s infinite; }
+.theme-current-queue-indicator-bell-bg { background-color: var(--theme-current-queue-indicator-bell-bg); }
+.theme-current-queue-indicator-bell-icon { color: var(--theme-current-queue-indicator-bell-icon); }
+.theme-waiting-list-container { background-color: var(--theme-waiting-list-bg); }
+.theme-list-heading svg { color: var(--oceanic-medium-blue); }
+.theme-list-heading.waiting svg { color: var(--oceanic-light-blue); }
+.theme-list-heading.completed svg { color: var(--oceanic-deep-blue); }
+.theme-list-heading.skipped svg { color: #ef6c00; /* Orange 800 for contrast */ }
+.theme-alert-skipped { background-color: var(--theme-alert-skipped-bg); color: var(--theme-alert-skipped-text); border: 1px solid var(--theme-alert-skipped-border); }
+
+/* User Page Specifics */
+#queueNumber.theme-title-gradient { /* Ensure queue number is very prominent */
+  color: var(--oceanic-deep-blue);
+}
+#reserveQueue.theme-title-gradient {
+  color: var(--oceanic-medium-blue);
+}
+
+/* Ensure text in the right panel of display page is readable */
+#display-page-right-panel .theme-list-heading span {
+  color: var(--theme-list-heading-text-color);
+}
+#display-page-right-panel .theme-list-item-bg {
+  background-color: var(--theme-list-item-bg);
+  color: var(--theme-list-item-text-color);
+  border: 1px solid var(--theme-list-item-border);
+}
+#display-page-right-panel .theme-list-item-bg:hover {
+  background-color: var(--theme-list-item-hover-bg);
+}

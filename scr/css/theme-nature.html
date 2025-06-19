@@ -1,0 +1,272 @@
+/* Nature Theme - ธีมสีเขียวธรรมชาติ */
+:root {
+  /* ตัวแปรสีหลักของธีม */
+  --theme-bg-gradient-from: #e8f5e9; /* Light Greenish White */
+  --theme-bg-gradient-to: #dcedc8;   /* Lighter Greenish White */
+  --theme-card-bg: rgba(255, 255, 255, 0.97);
+  --theme-card-backdrop-blur: blur(2px);
+  --theme-header-bg: #4CAF50; /* Solid Green for main page headers */
+  --theme-header-backdrop-blur: blur(5px);
+  --theme-header-text-color: white;
+  --theme-footer-bg: rgba(0, 77, 0, 0.15); /* Dark Green, 15% transparent */
+  --theme-footer-backdrop-blur: blur(3px);
+  --theme-footer-text-color: #e8f5e9;
+  --theme-button-primary-gradient-from: #388E3C; /* Darker Green */
+  --theme-button-primary-gradient-to: #2E7D32;   /* Even Darker Green */
+  --theme-button-primary-hover-gradient-from: #2E7D32;
+  --theme-button-primary-hover-gradient-to: #1B5E20; /* Darkest Green */
+  --theme-button-primary-text-color: white;
+  --theme-title-gradient-from: #1B5E20; /* Darkest Green - solid color for titles */
+  --theme-title-gradient-to: #1B5E20;
+  --theme-text-color-default: #212121; /* Near black for readability */
+  --theme-text-color-on-gradient-cards: white;
+  --theme-text-muted-on-gradient-cards: #C8E6C9; /* Light green for muted text */
+
+  /* Nature Dashboard Card Variables */
+  --theme-dashboard-card1-from: #66BB6A; /* Green 400 */
+  --theme-dashboard-card1-to: #43A047;   /* Green 600 */
+  --theme-dashboard-card2-from: #AED581; /* Light Green 300 */
+  --theme-dashboard-card2-to: #9CCC65;   /* Light Green 400 */
+  --theme-dashboard-card3-from: #81C784; /* Green 300 */
+  --theme-dashboard-card3-to: #4CAF50;   /* Green 500 */
+  --theme-dashboard-card4-from: #A5D6A7; /* Green 200 */
+  --theme-dashboard-card4-to: #FFB74D;   /* Orange 300 (for a bit of contrast/warning) */
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.3);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.45);
+  --theme-dashboard-card-button-text-color: white;
+
+  /* Interaction Overlay for Nature Theme */
+  --theme-interaction-overlay-bg: rgba(0, 77, 0, 0.88); /* Dark green, semi-transparent */
+  --theme-interaction-overlay-text: white;
+
+  /* Display Page Specific Variables for Nature Theme */
+  --theme-panel-left-bg: rgba(17, 51, 17, 0.8); /* Very dark green, semi-transparent */
+  --theme-panel-left-backdrop-blur: blur(5px);
+  --theme-panel-right-bg: #f4f8f4; /* Very light off-white green */
+  --theme-panel-right-backdrop-blur: none;
+
+  /* Gradient for display page section headers as requested */
+  --theme-display-header-gradient-from: #00ee6e;
+  --theme-display-header-gradient-to: #0c75e6;
+  --theme-display-header-text: white;
+  --theme-display-header-border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  --theme-display-time-accent-bg: rgba(0,0,0,0.25);
+  --theme-display-time-accent-text: white;
+  --theme-display-time-border: 1px solid rgba(255,255,255,0.3);
+
+  --theme-current-queue-card-bg-from: #2E7D32; /* Dark Green */
+  --theme-current-queue-card-bg-to: #1B5E20;   /* Darker Green */
+  --theme-current-queue-card-text: white;
+  --theme-current-queue-card-box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+
+  --theme-current-queue-indicator-text: #A5D6A7; /* Light Green for "กำลังเรียกคิว" */
+  --theme-current-queue-indicator-bell-bg: #FFFFFF;
+  --theme-current-queue-indicator-bell-icon: #1B5E20; /* Darkest Green */
+
+  --theme-waiting-list-bg: transparent;
+
+  --theme-list-heading-text-color: white; /* Text on the gradient display header */
+
+  --theme-list-item-bg: rgba(232, 245, 233, 0.9); /* Light green tint for list items */
+  --theme-list-item-text-color: #1B5E20; /* Dark green text for readability */
+  --theme-list-item-border: 1px solid rgba(0,0,0,0.05);
+  --theme-list-item-hover-bg: rgba(200, 230, 201, 1); /* Slightly darker green on hover */
+
+  --theme-alert-skipped-bg: #FFF9C4; /* Light Yellow */
+  --theme-alert-skipped-border: #FFEB3B; /* Yellow */
+  --theme-alert-skipped-text: #6D4C41; /* Brownish for text on yellow */
+
+  --theme-text-on-dark: #e8f5e9; /* Light green for text on very dark backgrounds */
+}
+
+/* สไตล์สำหรับ body ของธีมธรรมชาติ */
+body {
+  background-image: linear-gradient(to bottom right, var(--theme-bg-gradient-from), var(--theme-bg-gradient-to));
+  color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดทั่วไปในธีมธรรมชาติ */
+.theme-card {
+  background-color: var(--theme-card-bg);
+  backdrop-filter: var(--theme-card-backdrop-blur);
+  border: 1px solid #dcedc8; /* Subtle border matching light bg */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* สไตล์สำหรับส่วนหัวของหน้า (เช่น หน้า login, admin) ในธีมธรรมชาติ */
+.theme-header {
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur);
+  color: var(--theme-header-text-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* สไตล์สำหรับส่วนท้ายของหน้าในธีมธรรมชาติ */
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur);
+  color: var(--theme-footer-text-color);
+}
+
+/* สไตล์สำหรับปุ่มหลักในธีมธรรมชาติ */
+.theme-button-primary {
+  background-image: linear-gradient(to right, var(--theme-button-primary-gradient-from), var(--theme-button-primary-gradient-to));
+  color: var(--theme-button-primary-text-color);
+  border: none;
+}
+.theme-button-primary:hover {
+  background-image: linear-gradient(to right, var(--theme-button-primary-hover-gradient-from), var(--theme-button-primary-hover-gradient-to));
+}
+
+/* สไตล์สำหรับหัวข้อ (ในธีมธรรมชาติจะใช้สีทึบ) */
+.theme-title-gradient {
+  color: var(--theme-title-gradient-from);
+}
+
+/* สไตล์สำหรับข้อความทั่วไป */
+.theme-text-default {
+    color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดที่ซ้อนอยู่ข้างใน */
+.theme-card-inset {
+  background-color: var(--theme-card-bg);
+  border: 1px solid #e8f5e9; /* Slightly lighter border for inset */
+}
+
+/* สไตล์ทั่วไปสำหรับการ์ดบน Dashboard ในธีมธรรมชาติ */
+.theme-dashboard-card {
+    color: var(--theme-text-color-on-gradient-cards);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.theme-dashboard-card:hover {
+    box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+}
+
+.theme-dashboard-card p {
+   color: var(--theme-text-muted-on-gradient-cards);
+    margin-bottom: 1rem;
+}
+.theme-dashboard-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--theme-text-color-on-gradient-cards);
+}
+.theme-dashboard-card-button {
+    background-color: var(--theme-dashboard-card-button-bg);
+    color: var(--theme-dashboard-card-button-text-color);
+    backdrop-filter: blur(2px);
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.5rem;
+    transition-property: background-color, color, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+.theme-dashboard-card-button:hover {
+    background-color: var(--theme-dashboard-card-button-hover-bg);
+}
+
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* Styles for specific display-page elements (Nature Theme) */
+.theme-interaction-overlay {
+  background-color: var(--theme-interaction-overlay-bg);
+  color: var(--theme-interaction-overlay-text);
+}
+
+.theme-panel-left {
+  background-color: var(--theme-panel-left-bg);
+  backdrop-filter: var(--theme-panel-left-backdrop-blur);
+}
+
+.theme-panel-right {
+  background-color: var(--theme-panel-right-bg);
+}
+
+.theme-display-header {
+  background-image: linear-gradient(to right, var(--theme-display-header-gradient-from), var(--theme-display-header-gradient-to));
+  color: var(--theme-display-header-text);
+  border-bottom: var(--theme-display-header-border-bottom);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.theme-current-queue-card {
+  background-image: linear-gradient(to bottom right, var(--theme-current-queue-card-bg-from), var(--theme-current-queue-card-bg-to));
+  color: var(--theme-current-queue-card-text);
+  box-shadow: var(--theme-current-queue-card-box-shadow);
+}
+
+@keyframes blink-text-color-nature {
+  0%, 100% {
+    color: var(--theme-current-queue-indicator-text); /* Nature theme indicator color */
+  }
+  50% {
+    color: white; /* Blink to white */
+  }
+}
+
+.theme-current-queue-indicator-text {
+  color: var(--theme-current-queue-indicator-text);
+  animation: blink-text-color-nature 1.5s infinite;
+}
+
+.theme-current-queue-indicator-bell-bg {
+  background-color: var(--theme-current-queue-indicator-bell-bg);
+}
+
+.theme-current-queue-indicator-bell-icon {
+  color: var(--theme-current-queue-indicator-bell-icon);
+}
+
+.theme-waiting-list-container {
+  background-color: var(--theme-waiting-list-bg);
+}
+
+/* Icon colors for list headings in nature theme */
+.theme-list-heading.waiting svg { color: #26A69A; /* Teal 400 */ }
+.theme-list-heading.completed svg { color: #66BB6A; /* Green 400 */ }
+.theme-list-heading.skipped svg { color: #FFCA28; /* Amber 400 */ }
+
+.theme-alert-skipped {
+  background-color: var(--theme-alert-skipped-bg);
+  color: var(--theme-alert-skipped-text);
+  border: 1px solid var(--theme-alert-skipped-border);
+}
+
+/* Overrides for user-page elements in nature theme */
+/* ทำให้ข้อความ "จองคิวสำเร็จ!" บนหน้า user-page เป็นสีเขียวสดใส */
+#reserveQueue.theme-title-gradient {
+  color: #4CAF50; /* Medium Green */
+}
+/* ทำให้ข้อความ "หมายเลขคิวของคุณคือ" บนหน้า user-page เป็นสีเขียวเข้มปานกลาง */
+#queueResult .theme-card-inset > p.theme-text-default:first-child {
+  color: #388E3C; /* Darker Green */
+}
+/* ทำให้หมายเลขคิวบนหน้า user-page เป็นสีเขียวเข้มสุด (เหมือนสี title) */
+#queueNumber.theme-title-gradient {
+  color: var(--theme-title-gradient-from); /* Uses the theme's title color (#1B5E20) */
+}
+
+.theme-login-card {
+  background-color: rgba(240, 248, 240, 0.98); /* Very light green tint */
+  backdrop-filter: blur(3px); /* Consistent with nature theme's card blur */
+  border: 1px solid #d0e0d0; /* Subtle green border */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+  color: var(--theme-text-color-default);
+}
+
+
+</style>

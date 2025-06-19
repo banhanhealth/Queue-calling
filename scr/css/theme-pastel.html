@@ -1,0 +1,286 @@
+/* Pastel Theme - ธีมสีพาสเทล */
+:root {
+  /* Updated Pastel Palette - "Pastel Dream" */
+  --pastel-dream-bg: #fffaf5; /* Very light peachy-pink white, almost off-white */
+  --pastel-dream-misty-rose: #ffe4e1;
+  --pastel-dream-soft-peach: #ffdab9;
+  --pastel-dream-light-lavender: #e6e6fa;
+  --pastel-dream-powder-blue: #b0e0e6;
+  --pastel-dream-mint-cream: #f5fffa;
+  --pastel-dream-text-dark: #6d605a; /* Soft, warm dark brown/gray */
+  --pastel-dream-text-medium: #8d7f7a;
+  --pastel-dream-title: #c098c0; /* Muted Lilac/Orchid for titles */
+
+  --theme-bg-gradient-from: var(--pastel-dream-bg);
+  --theme-bg-gradient-to: var(--pastel-dream-bg);
+  --theme-card-bg: rgba(255, 255, 255, 0.97); /* Slightly more opaque for definition */
+  --theme-card-backdrop-blur: none; /* Minimalist, no blur or very subtle */
+  --theme-header-bg: var(--pastel-dream-misty-rose); /* Misty Rose for header */
+  --theme-header-backdrop-blur: none;
+  --theme-header-text-color: var(--pastel-dream-text-dark);
+  --theme-footer-bg: rgba(255, 228, 225, 0.3); /* Lighter, more transparent misty rose for footer */
+  --theme-footer-backdrop-blur: blur(2px);
+  --theme-footer-text-color: var(--pastel-dream-text-medium);
+  --theme-button-primary-gradient-from: var(--pastel-dream-soft-peach); /* Soft Peach for buttons */
+  --theme-button-primary-gradient-to: var(--pastel-dream-soft-peach);
+  --theme-button-primary-hover-gradient-from: #fdd0a7; /* Slightly darker peach */
+  --theme-button-primary-hover-gradient-to: #fdd0a7;
+  --theme-button-primary-text-color: var(--pastel-dream-text-dark);
+  --theme-title-gradient-from: var(--pastel-dream-title); /* Muted Lilac for titles */
+  --theme-title-gradient-to: var(--pastel-dream-title);
+  --theme-text-color-default: var(--pastel-dream-text-dark);
+  --theme-text-color-on-gradient-cards: var(--pastel-dream-text-dark); /* Text on pastel cards */
+  --theme-text-muted-on-gradient-cards: var(--pastel-dream-text-medium);
+
+  /* Pastel Dashboard Card Variables (ensure these are defined) */
+  --theme-dashboard-card1-from: var(--pastel-dream-misty-rose); /* Misty Rose */
+  --theme-dashboard-card1-to: #ffefef; /* Lighter Misty Rose */
+  --theme-dashboard-card2-from: var(--pastel-dream-soft-peach); /* Soft Peach */
+  --theme-dashboard-card2-to: #fff0e0; /* Lighter Soft Peach */
+  --theme-dashboard-card3-from: var(--pastel-dream-light-lavender); /* Light Lavender */
+  --theme-dashboard-card3-to: #f0f0ff; /* Lighter Lavender */
+  --theme-dashboard-card4-from: var(--pastel-dream-powder-blue); /* Powder Blue */
+  --theme-dashboard-card4-to: #e0f5f5; /* Lighter Powder Blue */
+  --theme-dashboard-card-button-bg: rgba(255, 255, 255, 0.6);
+  --theme-dashboard-card-button-hover-bg: rgba(255, 255, 255, 0.8);
+  --theme-dashboard-card-button-text-color: var(--pastel-dream-text-dark);
+
+  /* Interaction Overlay for Pastel Theme */
+  --theme-interaction-overlay-bg: rgba(255, 228, 225, 0.9); /* Misty Rose, semi-transparent */
+  --theme-interaction-overlay-text: var(--theme-text-color-default);
+
+  /* Display Page Specific Variables for Pastel Theme */
+  --theme-panel-left-bg: rgba(255, 250, 245, 0.85); /* Very light peachy, semi-transparent */
+  --theme-panel-left-backdrop-blur: none;
+  --theme-panel-right-bg: var(--pastel-dream-mint-cream); /* Mint Cream for right panel content area */
+  --theme-panel-right-backdrop-blur: none;
+
+  --theme-display-header-bg: var(--pastel-dream-soft-peach); /* Soft Peach for display header */
+  --theme-display-header-text: var(--pastel-dream-text-dark);
+  --theme-display-header-border-bottom: 1px solid #fdd0a7; /* Subtle border */
+
+  --theme-display-time-accent-bg: var(--pastel-dream-light-lavender); /* Light Lavender for time box */
+  --theme-display-time-accent-text: var(--theme-text-color-default);
+  --theme-display-time-border: 1px solid #dcd0ff;
+
+  --theme-current-queue-card-bg-from: var(--pastel-dream-powder-blue); /* Powder Blue */
+  --theme-current-queue-card-bg-to: var(--pastel-dream-powder-blue);   /* Solid color for pastel */
+  --theme-current-queue-card-text: var(--pastel-dream-text-dark);
+  --theme-current-queue-card-box-shadow: 0 6px 12px rgba(0,0,0,0.04); /* Softer shadow */
+
+  --theme-current-queue-indicator-text: var(--pastel-dream-title); /* Muted Lilac for blinking "กำลังเรียกคิว" */
+  --theme-current-queue-indicator-bell-bg: #ffffff;
+  --theme-current-queue-indicator-bell-icon: var(--pastel-dream-title);
+
+  --theme-waiting-list-bg: transparent; /* No specific background for waiting list container */
+
+  --theme-list-heading-text-color: var(--pastel-dream-text-dark);
+
+  --theme-list-item-bg: rgba(255, 255, 255, 0.85); /* Lighter, cleaner items */
+  --theme-list-item-text-color: var(--pastel-dream-text-dark);
+  --theme-list-item-border: 1px solid #f0f0f0;
+  --theme-list-item-hover-bg: rgba(255, 255, 255, 1);
+
+  --theme-alert-skipped-bg: #fffacd; /* LemonChiffon */
+  --theme-alert-skipped-border: #fada5e; /* LightGold */
+  --theme-alert-skipped-text: #b8860b; /* DarkGoldenrod */
+
+  --theme-text-on-dark: var(--theme-text-color-default); /* For video player controls, if any, on a dark video */
+}
+
+/* สไตล์สำหรับ body ของธีมพาสเทล */
+body {
+  background-color: var(--theme-bg-gradient-from);
+  color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดทั่วไปในธีมพาสเทล */
+.theme-card {
+  background-color: var(--theme-card-bg);
+  backdrop-filter: var(--theme-card-backdrop-blur);
+  border: 1px solid #f0e8e0; /* Softer border */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.04); /* Slightly softer shadow */
+}
+
+/* สไตล์สำหรับส่วนหัวของหน้าในธีมพาสเทล */
+.theme-header {
+  background-color: var(--theme-header-bg);
+  backdrop-filter: var(--theme-header-backdrop-blur);
+  color: var(--theme-header-text-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+} 
+
+/* สไตล์สำหรับส่วนท้ายของหน้าในธีมพาสเทล */
+.theme-footer {
+  background-color: var(--theme-footer-bg);
+  backdrop-filter: var(--theme-footer-backdrop-blur);
+  color: var(--theme-footer-text-color);
+}
+  
+/* สไตล์สำหรับปุ่มหลักในธีมพาสเทล */
+.theme-button-primary {
+  background-color: var(--theme-button-primary-gradient-from);
+  color: var(--theme-button-primary-text-color);
+  border: 1px solid #f8c0a8; /* Border matching button color */
+}
+.theme-button-primary:hover {
+  background-color: var(--theme-button-primary-hover-gradient-from);
+}
+ 
+/* สไตล์สำหรับหัวข้อที่เป็น gradient (ในธีมพาสเทลจะใช้สีทึบ) */
+.theme-title-gradient { /* Solid color for pastel */
+  color: var(--theme-title-gradient-from);
+}
+
+/* สไตล์สำหรับข้อความทั่วไป */
+.theme-text-default {
+    color: var(--theme-text-color-default);
+}
+
+/* สไตล์สำหรับการ์ดที่ซ้อนอยู่ข้างใน */
+.theme-card-inset {
+  background-color: rgba(255, 250, 245, 0.9); /* Slightly different inset background */
+  border: 1px solid #f8f0e8; /* Slightly lighter border for inset */
+}
+
+/* สไตล์ทั่วไปสำหรับการ์ดบน Dashboard ในธีมพาสเทล */
+.theme-dashboard-card { /* Common styles for all dashboard cards */
+    color: var(--theme-text-color-on-gradient-cards);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e5e5; /* Subtle border for pastel cards */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.03); /* Softer shadow */
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* สไตล์ hover สำหรับการ์ดบน Dashboard */
+.theme-dashboard-card:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    transform: translateY(-2px);
+}
+
+/* สไตล์ข้อความย่อหน้าในการ์ด Dashboard */
+.theme-dashboard-card p {
+   color: var(--theme-text-muted-on-gradient-cards); /* สีข้อความรองในการ์ด */
+    margin-bottom: 1rem; /* ระยะห่างด้านล่าง */
+}
+.theme-dashboard-card h2 { /* สไตล์หัวข้อ H2 ในการ์ด Dashboard */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--theme-text-color-on-gradient-cards); /* Ensure h2 also uses this */
+}
+/* สไตล์ปุ่มภายในการ์ด Dashboard */
+.theme-dashboard-card-button {
+    background-color: var(--theme-dashboard-card-button-bg); /* สีพื้นหลังปุ่ม */
+    color: var(--theme-dashboard-card-button-text-color); /* สีข้อความปุ่ม */
+    font-weight: 600; /* ความหนาตัวอักษร */
+    padding: 0.5rem 1.25rem; /* ระยะห่างภายในปุ่ม */
+    border-radius: 0.5rem; /* ความโค้งมนของขอบ */
+    border: 1px solid rgba(0,0,0,0.08); /* Softer border for buttons on cards */
+    transition-property: background-color, color, box-shadow, transform, filter, -webkit-backdrop-filter, backdrop-filter; /* กำหนด transition */
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* รูปแบบ transition */
+    transition-duration: 150ms; /* ระยะเวลา transition */
+}
+.theme-dashboard-card-button:hover { /* สไตล์ hover สำหรับปุ่มในการ์ด Dashboard */
+    background-color: var(--theme-dashboard-card-button-hover-bg);
+}
+/* สไตล์เฉพาะสำหรับการ์ด Dashboard แต่ละใบ (ไล่สีพื้นหลัง) */
+.theme-dashboard-card-1 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card1-from), var(--theme-dashboard-card1-to)); }
+.theme-dashboard-card-2 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card2-from), var(--theme-dashboard-card2-to)); }
+.theme-dashboard-card-3 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card3-from), var(--theme-dashboard-card3-to)); }
+.theme-dashboard-card-4 { background-image: linear-gradient(to bottom right, var(--theme-dashboard-card4-from), var(--theme-dashboard-card4-to)); }
+
+/* สไตล์สำหรับ Overlay เริ่มต้นการแสดงผลในธีมพาสเทล */
+.theme-interaction-overlay {
+  background-color: var(--theme-interaction-overlay-bg);
+  color: var(--theme-interaction-overlay-text);
+}
+
+/* Styles for specific display-page elements using their dedicated variables (Pastel Theme) */
+.theme-panel-left {
+  background-color: var(--theme-panel-left-bg);
+  backdrop-filter: var(--theme-panel-left-backdrop-blur);
+}
+
+.theme-panel-right {
+  background-color: var(--theme-panel-right-bg);
+  /* backdrop-filter: var(--theme-panel-right-backdrop-blur); */ /* White bg makes blur ineffective */
+}
+
+.theme-display-header {
+  background-color: var(--theme-display-header-bg); /* Solid color for pastel */
+  color: var(--theme-display-header-text);
+  border-bottom: 1px solid var(--theme-display-header-border-bottom);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03); /* Softer shadow for pastel */
+}
+
+.theme-current-queue-card {
+  background-color: var(--theme-current-queue-card-bg-from); /* Solid color for pastel */
+  color: var(--theme-current-queue-card-text);
+  box-shadow: var(--theme-current-queue-card-box-shadow);
+}
+
+@keyframes blink-text-color-pastel {
+  0%, 100% {
+    color: var(--theme-current-queue-indicator-text); /* Pastel indicator color */
+  }
+  50% {
+    color: var(--theme-text-color-default); /* Blink to default text color */
+  }
+}
+
+.theme-current-queue-indicator-text {
+  color: var(--theme-current-queue-indicator-text);
+  animation: blink-text-color-pastel 1.5s infinite;
+}
+
+.theme-current-queue-indicator-bell-bg {
+  background-color: var(--theme-current-queue-indicator-bell-bg);
+}
+
+.theme-current-queue-indicator-bell-icon {
+  color: var(--theme-current-queue-indicator-bell-icon);
+}
+
+.theme-waiting-list-container {
+  background-color: var(--theme-waiting-list-bg);
+}
+
+/* Icon colors for list headings in pastel */
+.theme-list-heading.waiting svg { color: var(--pastel-dream-powder-blue); }
+.theme-list-heading.completed svg { color: #c1e1c1; /* Pastel Green */ }
+.theme-list-heading.skipped svg { color: var(--pastel-dream-soft-peach); }
+
+.theme-alert-skipped {
+  background-color: var(--theme-alert-skipped-bg);
+  color: var(--theme-alert-skipped-text);
+  border: 1px solid var(--theme-alert-skipped-border);
+}
+
+/* Overrides for user-page elements in pastel theme */
+/* ทำให้ข้อความ "จองคิวสำเร็จ!" บนหน้า user-page เป็นสีเขียวพาสเทล */
+#reserveQueue.theme-title-gradient {
+  color: #a7d8a9; /* Softer Pastel green */
+}
+/* ทำให้ข้อความ "หมายเลขคิวของคุณคือ" บนหน้า user-page เป็นสีฟ้าพาสเทล */
+#queueResult .theme-card-inset > p.theme-text-default:first-child {
+  color: var(--pastel-dream-powder-blue);
+}
+/* ทำให้หมายเลขคิวบนหน้า user-page เป็นสีม่วงพาสเทลเข้ม (เหมือนสี title) */
+#queueNumber.theme-title-gradient {
+  color: var(--theme-title-gradient-from); /* Uses the theme's title color */
+}
+
+.theme-login-card {
+  background-color: var(--pastel-dream-mint-cream); /* Mint Cream */
+  border: 1px solid #d4f0e8; /* Subtle border */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04); /* Softer shadow */
+  color: var(--theme-text-color-default);
+  /* backdrop-filter is none for pastel cards by default */
+}
+
+
+</style>

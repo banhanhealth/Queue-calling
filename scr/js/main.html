@@ -5,8 +5,8 @@ function showSection(sectionId) {
   const sections = [
     'loginForm',
     'dashboard',
-    'userSection',
-    'displaySection',
+    // 'userSection',
+    // 'displaySection',
     'adminSection',
     'settingsSection' // Changed from initSection
   ];
@@ -22,6 +22,10 @@ function showSection(sectionId) {
         // If settingsSection is shown, call its data loading functions
         if (id === 'settingsSection' && typeof onShowSettingsSection === 'function') {
           onShowSettingsSection();
+        }
+        // Add a similar hook for userSection
+        if (id === 'userSection' && typeof onShowUserSection === 'function') {
+          onShowUserSection();
         }
       } else {
         el.classList.add('hidden');

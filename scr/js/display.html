@@ -16,13 +16,41 @@
     let slideshowInterval = 7000; // Default: 7 seconds per image
     let slideshowTransition = 'fade'; // Default transition effect
 
+    // --- Sound Generation Settings ---
+    let soundGenerationMethod = 'url'; // Default, updated from server settings
+    // Map sound type keys from pattern to Thai phrases for TTS methods
+    const ttsPhrases = {
+        'start_call': 'เชิญหมายเลขคิว',
+        'end_call': 'ค่ะ',
+        'counter_prefix': 'ที่ช่องบริการหมายเลข',
+        // Add other sound types here if they have text equivalents for TTS
+
+    };
+    
+    // DOM Element Variables - Declare all globals here
+    let currentQueueEl;
+    let currentServiceEl;
+    let completedQueueHistoryEl;
+    let waitingQueueListEl;
+    let skippedQueueListEl;
+    let skippedQueuesSectionEl;
+    let currentTimeEl;
+    let organizationNameDisplayEl;
+    let youtubePlayerEl;
+    let slideshowImageEl;
+    let mediaPlaceholderEl;
+    let callingIndicatorEl;
+    let interactionOverlay;
+    let startDisplayButton;
+    let ttsAvailableVoices = []; // Store available voices for TTS
+
     // Function to initialize DOM elements
     function initDOMElements() {
         console.log("Initializing DOM elements");
         currentQueueEl = document.getElementById('currentQueue');
         currentServiceEl = document.getElementById('currentService'); // This is for the *current* calling queue
-        completedQueueHistoryEl = document.getElementById('completedQueueHistory'); // Renamed
-        queueHistoryEl = document.getElementById('queueHistory');
+        completedQueueHistoryEl = document.getElementById('completedQueueHistory');
+        // queueHistoryEl = document.getElementById('queueHistory'); // This element ID doesn't exist / not used.
         skippedQueueListEl = document.getElementById('skippedQueueList');
         skippedQueuesSectionEl = document.getElementById('skippedQueuesSection');
         currentTimeEl = document.getElementById('currentTime');
@@ -34,6 +62,13 @@
         callingIndicatorEl = document.getElementById('callingIndicator'); // Added
         interactionOverlay = document.getElementById('interactionOverlay');
         startDisplayButton = document.getElementById('startDisplayButton');
+
+        // Initialize TTS voices
+        if ('speechSynthesis' in window) {
+            loadTTSVoices(); // Initial load
+            // Listen for changes in available voices
+            window.speechSynthesis.onvoiceschanged = loadTTSVoices;
+        }
     }
 
     function initAudioContext() {
@@ -50,6 +85,12 @@
         } catch (e) {
             console.error("Error initializing AudioContext:", e);
         }
+    }
+
+    function loadTTSVoices() {
+        ttsAvailableVoices = window.speechSynthesis.getVoices();
+        console.log("TTS voices loaded/updated. Count:", ttsAvailableVoices.length);
+        // ttsAvailableVoices.forEach(voice => console.log(`Voice: ${voice.name}, Lang: ${voice.lang}, Default: ${voice.default}`));
     }
 
     function setupEventListeners() {
@@ -142,6 +183,11 @@
         // Store previous calling queue to detect changes
         const previousCallingQueueNumber = currentQueueData && currentQueueData.calling ? currentQueueData.calling.number : null;
 
+        // Update sound generation method from server data
+        if (data.SoundGenerationMethod) {
+            soundGenerationMethod = data.SoundGenerationMethod;
+            console.log("Sound generation method set to:", soundGenerationMethod);
+        }
         currentQueueData = data; 
 
         // Update display settings
@@ -547,7 +593,7 @@
         // Add a small delay to ensure audio context has time to initialize
         setTimeout(function() {
             if (!audioContext || audioContext.state === 'suspended') {
-                console.warn("AudioContext not active. Trying to resume...");
+                console.warn("AudioContext not active. User interaction might be needed to enable sound.");
                 
                 // Try to resume the audio context with user interaction simulation
                 document.body.addEventListener('click', function resumeAudioOnce() {
@@ -555,7 +601,15 @@
                     document.body.removeEventListener('click', resumeAudioOnce);
                     
                     // Queue the sound play request to try again after user interaction
-                    audioQueue.push({ type: 'queueCall', data: { queueNumber, counterIdentifier, counterNameSoundId, announcementPattern, counterAnnouncementType } });
+                    // For URL method, we queue the URLs. For TTS, we'd queue the text generation.
+                    // Simplified: just re-call processQueueSound after interaction.
+                    // This might lead to double processing if not handled carefully.
+                    // A better approach for suspended context is to show a "click to enable sound" message.
+                    // For now, let's assume the initial interaction overlay handles this.
+                    // If it's still suspended here, it's a persistent issue.
+                    // We will proceed, and if it fails, console logs will show.
+                    // audioQueue.push({ type: 'queueCall', data: { queueNumber, counterIdentifier, counterNameSoundId, announcementPattern, counterAnnouncementType } });
+                    processQueueSoundInternal(); // Retry internal processing
                     console.log("Added queue call to audio queue for after user interaction");
                 }, { once: true });
                 
@@ -584,83 +638,193 @@
                 return;
             }
             
-            processQueueSound();
+            processQueueSoundInternal();
         }, 100);
         
-        function processQueueSound() {
-
-        if (Object.keys(soundMap).length === 0 || !soundMap.digits || !soundMap.types || !soundMap.rawById) {
-                console.warn("Sound map not fully loaded or is empty. Cannot play announcement.");
+        function processQueueSoundInternal() {
+            if (soundGenerationMethod === 'url' && (Object.keys(soundMap).length === 0 || !soundMap.digits || !soundMap.types || !soundMap.rawById)) {
+                console.warn("URL method: Sound map not fully loaded or is empty. Cannot play announcement.");
                 return;
             }
 
-            const newAudioSequence = [];
             const patternParts = announcementPattern.split(',');
+            let fullTextForTTS = "";
+            const audioSequenceForURL = [];
 
-            patternParts.forEach(function(part) {
+            patternParts.forEach(part => {
                 part = part.trim();
-                if (part === "{QUEUE_NUMBER}") {
-                    const queueDigits = String(queueNumber).padStart(3, '0'); // Assuming 3 digits
-                    for (let i = 0; i < queueDigits.length; i++) {
-                        const digit = queueDigits[i];
-                        if (soundMap.digits && soundMap.digits[digit]) {
-                            newAudioSequence.push(soundMap.digits[digit]);
-                        } else {
-                            console.warn("Sound for queue digit '" + digit + "' not found.");
+                if (soundGenerationMethod === 'url') {
+                    if (part === "{QUEUE_NUMBER}") {
+                        const queueDigits = String(queueNumber).padStart(3, '0');
+                        for (let i = 0; i < queueDigits.length; i++) {
+                            const digit = queueDigits[i];
+                            if (soundMap.digits && soundMap.digits[digit]) {
+                                audioSequenceForURL.push(soundMap.digits[digit]);
+                            } else { console.warn("URL: Sound for queue digit '" + digit + "' not found."); }
                         }
-                    }
-                } else if (part === "{COUNTER_NUMBER}") {
-                    if (counterAnnouncementType === 'name_sound' && counterNameSoundId && soundMap.rawById[counterNameSoundId]) {
-                        newAudioSequence.push(soundMap.rawById[counterNameSoundId]);
-                    } else { // Default to number or if name_sound is not available/selected
-                        if (counterIdentifier) {
+                    } else if (part === "{COUNTER_NUMBER}") {
+                        if (counterAnnouncementType === 'name_sound' && counterNameSoundId && soundMap.rawById[counterNameSoundId]) {
+                            audioSequenceForURL.push(soundMap.rawById[counterNameSoundId]);
+                        } else if (counterIdentifier) {
                             const counterDigits = String(counterIdentifier);
                             for (let i = 0; i < counterDigits.length; i++) {
                                 const digit = counterDigits[i];
                                 if (soundMap.digits && soundMap.digits[digit]) {
-                                    newAudioSequence.push(soundMap.digits[digit]);
-                                } else {
-                                    console.warn("Sound for counter digit '" + digit + "' not found.");
-                                }
+                                    audioSequenceForURL.push(soundMap.digits[digit]);
+                                } else { console.warn("URL: Sound for counter digit '" + digit + "' not found."); }
                             }
                         } else {
-                            console.warn("Counter ID is not available for {COUNTER_NUMBER} and not using name_sound.");
+                            console.warn("URL: Counter ID not available for {COUNTER_NUMBER} and not using name_sound.");
                         }
-                    }
-                } else if (part.startsWith("SOUND_TYPE_")) {
-                    const typeKey = part.replace("SOUND_TYPE_", "").toLowerCase();
-                    if (soundMap.types && soundMap.types[typeKey]) {
-                        newAudioSequence.push(soundMap.types[typeKey]);
+                    } else if (part.startsWith("SOUND_TYPE_")) {
+                        const typeKey = part.replace("SOUND_TYPE_", "").toLowerCase();
+                        if (soundMap.types && soundMap.types[typeKey]) {
+                            audioSequenceForURL.push(soundMap.types[typeKey]);
+                        } else { console.warn("URL: Sound for type '" + typeKey + "' (from " + part + ") not found."); }
+                    } else if (soundMap.rawById[part]) {
+                        audioSequenceForURL.push(soundMap.rawById[part]);
                     } else {
-                        console.warn("Sound for type '" + typeKey + "' (from " + part + ") not found.");
+                        console.warn("URL: Unknown part in pattern or sound ID not found: '" + part + "'");
                     }
-                } else if (soundMap.rawById[part]) { // Check if part is a direct sound ID
-                    newAudioSequence.push(soundMap.rawById[part]);
-                } else {
-                    console.warn("Unknown part in announcement pattern or sound ID not found: '" + part + "'");
+                } else { // For 'web_speech' or 'google_cloud_tts'
+                    let textPart = "";
+                    if (part === "{QUEUE_NUMBER}") {
+                        textPart = String(queueNumber); // TTS engines will convert "123" to "หนึ่งร้อยยี่สิบสาม"
+                    } else if (part === "{COUNTER_NUMBER}") {
+                        // Use serviceName if 'name_sound' and available, otherwise use counterIdentifier
+                        if (counterAnnouncementType === 'name_sound' && 
+                            currentQueueData && currentQueueData.calling && currentQueueData.calling.serviceName) {
+                            textPart = currentQueueData.calling.serviceName;
+                        } else if (counterIdentifier) {
+                            textPart = String(counterIdentifier);
+                        } else {
+                             console.warn("TTS: Counter identifier not available for {COUNTER_NUMBER}.");
+                        }
+                    } else if (part.startsWith("SOUND_TYPE_")) {
+                        const typeKey = part.replace("SOUND_TYPE_", "").toLowerCase();
+                        textPart = ttsPhrases[typeKey] || ""; // Get Thai phrase or empty string
+                        if (!textPart) console.warn("TTS: No Thai phrase defined for SOUND_TYPE_ '" + typeKey + "'");
+                    } else {
+                        // This case handles parts of the pattern that are not placeholders or known SOUND_TYPE_
+                        // It assumes such parts are literal text to be spoken.
+                        // Example: Pattern "คิว,{QUEUE_NUMBER},เชิญที่,{COUNTER_NUMBER},ครับ"
+                        // Here, "คิว", "เชิญที่", "ครับ" would be `part` and become `textPart`.
+                        // However, the current `soundMap.rawById[part]` check is for URL method.
+                        // For TTS, if a pattern contains a sound ID like '11', it's ambiguous.
+                        // Best practice for TTS patterns: use SOUND_TYPE_ for semantic parts, or literal Thai text.
+                        // For now, we'll assume non-placeholder, non-SOUND_TYPE_ parts are not standard for TTS.
+                        console.warn("TTS: Unknown or non-standard part in pattern: '" + part + "'. It will be ignored for TTS string construction unless it's a literal Thai phrase intended for the pattern.");
+                    }
+                    if (textPart) {
+                        fullTextForTTS += (fullTextForTTS ? " " : "") + textPart;
+                    }
                 }
             });
 
-            if (newAudioSequence.length > 0) {
-                audioQueue = audioQueue.concat(newAudioSequence); // Add new sounds to the queue
-                if (!isPlayingAudio) {
-                    processAudioQueue();
-                }
-            } else {
-                console.warn("No sounds generated for the announcement pattern.");
+            if (soundGenerationMethod === 'url') {
+                if (audioSequenceForURL.length > 0) {
+                    audioQueue = audioQueue.concat(audioSequenceForURL);
+                    if (!isPlayingAudio) processAudioQueue();
+                } else { console.warn("URL: No sounds generated for the announcement pattern."); }
+            } else if (soundGenerationMethod === 'web_speech') {
+                if (fullTextForTTS) {
+                    console.log("Web Speech TTS: ", fullTextForTTS);
+                    if ('speechSynthesis' in window) {
+                        // Cancel any currently speaking utterances to prevent overlap if called rapidly
+                        window.speechSynthesis.cancel();
+
+                        const utterance = new SpeechSynthesisUtterance(fullTextForTTS);
+                        utterance.lang = 'th-TH'; // Set desired language
+
+                        // Find a Thai voice from the pre-loaded list
+                        // Prioritize a voice that is marked as default for th-TH
+                        let thaiVoice = ttsAvailableVoices.find(voice => voice.lang === 'th-TH' && voice.default);
+
+                        if (!thaiVoice) {
+                            // If no default th-TH voice, find any th-TH voice
+                            thaiVoice = ttsAvailableVoices.find(voice => voice.lang === 'th-TH');
+                        }
+
+                        if (thaiVoice) {
+                            utterance.voice = thaiVoice;
+                            console.log("Using specific Thai voice:", thaiVoice.name, thaiVoice.lang, "Default:", thaiVoice.default);
+                        } else {
+                            console.warn("No specific Thai (th-TH) voice found in the available voices list. Relying on browser default for 'th-TH'.");
+                            if (ttsAvailableVoices.length > 0) console.log("Available voices:", ttsAvailableVoices.map(v => ({name: v.name, lang: v.lang, default: v.default })));
+                            else console.warn("No voices loaded at all. Speech synthesis might not work or 'onvoiceschanged' hasn't fired yet.");
+                        }
+                        window.speechSynthesis.speak(utterance);
+                    } else {
+                        console.error("Web Speech API (speechSynthesis) not supported by this browser.");
+                    }
+                } else { console.warn("Web Speech: No text generated for TTS."); }
+            } else if (soundGenerationMethod === 'google_cloud_tts') {
+                if (fullTextForTTS) {
+                    console.log("Google Cloud TTS Request: ", fullTextForTTS);
+                    google.script.run
+                        .withSuccessHandler(handleGoogleCloudTTSResponse)
+                        .withFailureHandler(handleGoogleCloudTTSError)
+                        .generateGoogleCloudSpeech(fullTextForTTS);
+                } else { console.warn("Google Cloud TTS: No text generated for TTS."); }
             }
-        } // End of processQueueSound function
+        } // End of processQueueSoundInternal function
+    } // End of playQueueSound function
+
+    function handleGoogleCloudTTSResponse(result) {
+        if (result.success && result.audioData) {
+            playSoundFromBase64(result.audioData);
+        } else {
+            console.error("Google Cloud TTS Error:", result.error, result.details);
+            // Optionally, display an error to the user or fallback to another sound method
+        }
+    }
+
+    function handleGoogleCloudTTSError(error) {
+        console.error("Error calling server-side Google Cloud TTS function:", error);
+        // Optionally, display an error to the user
+    }
+
+    function playSoundFromBase64(base64AudioData) {
+        if (!audioContext) {
+            console.error("AudioContext not initialized for base64 playback.");
+            initAudioContext(); 
+            if (!audioContext) {
+                console.error("Failed to initialize AudioContext after attempt for base64 playback.");
+                return;
+            }
+        }
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().catch(e => console.error("Resume AudioContext failed during base64 playback", e));
+        }
+
+        try {
+            // Using <audio> element is simpler for direct playback of base64 MP3
+            const audioSrc = 'data:audio/mp3;base64,' + base64AudioData;
+            const audio = new Audio(audioSrc);
+            audio.play().catch(e => console.error("Error playing base64 audio with <audio> element:", e));
+            console.log("Attempting to play base64 audio via <audio> element.");
+
+            audio.onended = () => {
+                console.log("Base64 audio finished playing.");
+            };
+            audio.onerror = (e) => {
+                console.error("Error event on <audio> element for base64:", e);
+            };
+
+        } catch (error) {
+            console.error("Error processing or playing base64 audio:", error);
+        }
     }
 
     async function playSoundFromUrl(url) {
         // Temporarily mute YouTube video if it's playing
-        const youtubeFrame = document.getElementById('youtubePlayer');
-        let videoWasPlaying = false;
+        // const youtubeFrame = document.getElementById('youtubePlayer');
+        // let videoWasPlaying = false;
         
-        if (youtubeFrame && youtubeFrame.style.display !== 'none') {
-            videoWasPlaying = true;
-            console.log("Temporarily pausing YouTube video for announcement");
-        }
+        // if (youtubeFrame && youtubeFrame.style.display !== 'none') {
+        //     videoWasPlaying = true;
+        //     console.log("Temporarily pausing YouTube video for announcement");
+        // }
         
         if (!audioContext) {
             console.error("AudioContext not initialized. Attempting to initialize...");
@@ -668,7 +832,7 @@
             if (!audioContext) {
                 console.error("Failed to initialize AudioContext. Cannot play sound.");
                 isPlayingAudio = false; // Reset flag
-                return;
+                return; // Important: return to prevent further execution if context fails
             }
         }
         
@@ -679,6 +843,9 @@
                 console.log("AudioContext resumed before playing sound");
             } catch (e) {
                 console.error("Failed to resume AudioContext:", e);
+                // If resume fails, we probably can't play.
+                // Consider how to handle this - maybe skip this sound.
+                return; 
             }
         }
         
@@ -692,69 +859,67 @@
             const arrayBuffer = await response.arrayBuffer();
             console.log("Sound data fetched, decoding audio...");
             
+            // Check if audioContext is still valid before decoding
+            if (!audioContext || audioContext.state !== 'running') {
+                console.warn("AudioContext not running, cannot decode audio data for URL:", url);
+                return;
+            }
+            
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
             console.log("Audio decoded successfully, playing sound...");
             
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
             
-            // Create a gain node to ensure volume is at maximum
+            // Create a gain node to ensure volume is at maximum (or desired level)
             const gainNode = audioContext.createGain();
             gainNode.gain.value = 1.0; // Maximum volume
             source.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
             source.start(0);
-            console.log("Sound started playing");
+            console.log("Sound started playing:", url);
             
             return new Promise(function(resolve) {
                 source.onended = function() {
-                    console.log("Sound finished playing");
+                    console.log("Sound finished playing:", url);
                     resolve();
                 };
+                // Add error handling for the source node itself if needed
+                source.onerror = function(errEvent) { // This might not be standard for BufferSourceNode
+                    console.error("Error on AudioBufferSourceNode for URL:", url, errEvent);
+                    resolve(); // Resolve anyway to continue queue
+                }
             });
         } catch (error) {
             console.error("Error playing sound from URL:", url, error);
             // Continue to next sound in queue even if one fails
+            // Ensure the promise resolves or rejects to not stall the queue.
+            return Promise.resolve(); // Resolve to continue
         }
     }
 
     async function processAudioQueue() {
         if (audioQueue.length === 0) {
             isPlayingAudio = false;
-            console.log("Audio queue is empty, stopping playback");
+            console.log("URL Audio queue is empty, stopping playback");
             return;
         }
         
         isPlayingAudio = true;
         const soundItem = audioQueue.shift();
         
-        // Handle both string URLs and complex queue items
         let soundUrlToPlay;
         if (typeof soundItem === 'string') {
             soundUrlToPlay = soundItem;
-        } else if (soundItem && soundItem.type === 'queueCall' && soundItem.data) {
-            // This is a queued call that was stored when AudioContext was suspended
-            console.log("Processing queued call item:", soundItem.data);
-            playQueueSound(
-                soundItem.data.queueNumber,
-                soundItem.data.counterIdentifier,
-                soundItem.data.counterNameSoundId,
-                soundItem.data.announcementPattern,
-                soundItem.data.counterAnnouncementType
-            );
-            // Continue with next item in queue
-            setTimeout(processAudioQueue, 100);
-            return;
         } else {
-            console.warn("Unknown item in audio queue:", soundItem);
+            console.warn("Unknown item in URL audio queue (expected string URL):", soundItem);
             // Skip this item and continue with next
             setTimeout(processAudioQueue, 100);
             return;
         }
         
-        console.log("Playing sound from queue:", soundUrlToPlay);
+        console.log("Playing sound from URL queue:", soundUrlToPlay);
         try {
             await playSoundFromUrl(soundUrlToPlay);
             // Slight delay before playing next sound to avoid abrupt transitions
@@ -782,7 +947,7 @@
                 console.log("Auto-starting display after timeout");
                 startDisplay();
             }
-        }, 5000); // 5 seconds timeout
+        }, 8000); // 5 seconds timeout
     });
 
     // Update the time display every second with clear formatting
@@ -810,19 +975,4 @@
         }
     }, 10000);
 
-    // DOM Elements - We'll initialize these after the document is fully loaded
-    let currentQueueEl;
-    let currentServiceEl;
-    let queueHistoryEl;
-    let skippedQueueListEl;
-    let skippedQueuesSectionEl;
-    let currentTimeEl;
-    let organizationNameDisplayEl;
-    let youtubePlayerEl;
-    let slideshowImageEl;
-    let mediaPlaceholderEl;
-    let waitingQueueListEl; // Added
-    let callingIndicatorEl; // Added
-    let interactionOverlay;
-    let startDisplayButton;
 </script>
