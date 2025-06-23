@@ -264,10 +264,18 @@ function login(username, password) {
   const sheet = ss.getSheetByName(SHEET_USERS);
   const data = sheet.getDataRange().getValues();
   
+  // Trim input values to be safe, in case of extra spaces from the form.
+  const trimmedUsername = username ? String(username).trim() : "";
+  const trimmedPassword = password ? String(password).trim() : "";
+
   for (let i = 1; i < data.length; i++) {
-    if (data[i][0] === username && data[i][1] === password) {
+    // Get sheet values, convert to string, and trim them to prevent type mismatches (e.g., number 1234 vs string '1234') and whitespace issues.
+    const sheetUsername = data[i][0] ? String(data[i][0]).trim() : "";
+    const sheetPassword = data[i][1] ? String(data[i][1]).trim() : "";
+
+    if (sheetUsername === trimmedUsername && sheetPassword === trimmedPassword) {
       const userProperties = PropertiesService.getUserProperties();
-      userProperties.setProperty('username', username);
+      userProperties.setProperty('username', sheetUsername); // Store the clean username
       userProperties.setProperty('role', data[i][2]);
       
       // สร้าง session ID และเก็บใน cache
@@ -281,6 +289,7 @@ function login(username, password) {
   
   return {success: false, message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง'};
 }
+
 
 // ฟังก์ชันสำหรับตรวจสอบสถานะการเข้าสู่ระบบ
 function checkLoginStatus() {
@@ -1185,9 +1194,9 @@ function getAllSlideshowImagesAdmin() {
     for (let i = 1; i < values.length; i++) { // Skip header
       if (values[i][SLI_COL_ID_IDX] && values[i][SLI_COL_IMAGE_URL_IDX]) { // ID and URL are essential
         images.push({
-          id: values[i][SLI_COL_ID_IDX].toString(),
-          imageUrl: values[i][SLI_COL_IMAGE_URL_IDX].toString(),
-          title: values[i][SLI_COL_TITLE_IDX] ? values[i][SLI_COL_TITLE_IDX].toString() : "",
+          id: String(values[i][SLI_COL_ID_IDX] || ''),
+          imageUrl: String(values[i][SLI_COL_IMAGE_URL_IDX] || ''),
+          title: String(values[i][SLI_COL_TITLE_IDX] || ''),
           displayOrder: values[i][SLI_COL_DISPLAY_ORDER_IDX] ? parseInt(values[i][SLI_COL_DISPLAY_ORDER_IDX]) : 0,
           isActive: values[i][SLI_COL_IS_ACTIVE_IDX] === true || (typeof values[i][SLI_COL_IS_ACTIVE_IDX] === 'string' && values[i][SLI_COL_IS_ACTIVE_IDX].toLowerCase() === 'true')
         });

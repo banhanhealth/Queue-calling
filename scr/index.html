@@ -28,7 +28,25 @@
     <? } else { /* Default to standard or if themeName is 'standard' */ ?>
           <?!= include('css/theme-standard'); ?>
     <? } ?>
+     
+     </style>
+     <style>
+    /* Additional styles for toast notifications */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translate3d(0, -20%, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+    .animate-fade-in-down {
+      animation: fadeInDown 0.5s ease-out forwards;
+    }
   </style>
+
 </head>
 <!-- ส่วน Body ของหน้าเว็บ -->
 <body class="font-sans <? if (activeTheme) { ?>theme-<?= activeTheme ?><? } else { ?>theme-standard<? } ?>"> <!-- Add theme class to body -->
@@ -166,122 +184,10 @@
 
   </div> <!-- Closing div for id="app" -->
 
-    <!-- Add Slideshow Image Modal -->
-    <div id="addSlideshowImageModal" class="fixed z-20 inset-0 overflow-y-auto hidden" aria-labelledby="addSlideshowImageModalTitle" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6a9 9 0 01-9-9V4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 011-1h2a1 1 0 011 1v7a9 9 0 01-9 9z" />
-                            </svg>
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="addSlideshowImageModalTitle">เพิ่มรูปภาพสไลด์โชว์ใหม่</h3>
-                            <div class="mt-4 space-y-4">
-                                <div>
-                                    <label for="newSlideshowImageUrl" class="block text-sm font-medium text-gray-700">URL รูปภาพ:</label>
-                                    <input type="url" id="newSlideshowImageUrl" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="https://example.com/image.jpg">
-                                </div>
-                                <div>
-                                    <label for="newSlideshowImageTitle" class="block text-sm font-medium text-gray-700">หัวข้อ (Title):</label>
-                                    <input type="text" id="newSlideshowImageTitle" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="คำอธิบายรูปภาพ">
-                                </div>
-                                <div>
-                                    <label for="newSlideshowImageOrder" class="block text-sm font-medium text-gray-700">ลำดับการแสดงผล:</label>
-                                    <input type="number" id="newSlideshowImageOrder" min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="0">
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="newSlideshowImageIsActive" type="checkbox" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500" checked>
-                                    <label for="newSlideshowImageIsActive" class="ml-2 block text-sm text-gray-900">ใช้งานรูปภาพนี้ (Is Active)</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="addSlideshowImageModalMessage" class="px-6 py-2 text-sm"></div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="saveNewSlideshowImageBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        บันทึก
-                    </button>
-                    <button type="button" id="cancelNewSlideshowImageBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        ยกเลิก
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-[10000] w-full max-w-xs"></div>
 
-    <!-- Edit Slideshow Image Modal -->
-    <div id="editSlideshowImageModal" class="fixed z-20 inset-0 overflow-y-auto hidden" aria-labelledby="editSlideshowImageModalTitle" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                         <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                        </div>
-                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="editSlideshowImageModalTitle">แก้ไขรูปภาพสไลด์โชว์</h3>
-                            <input type="hidden" id="editSlideshowImageId">
-                            <div class="mt-4 space-y-4">
-                                <div>
-                                    <label for="editSlideshowImageUrl" class="block text-sm font-medium text-gray-700">URL รูปภาพ:</label>
-                                    <input type="url" id="editSlideshowImageUrl" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="editSlideshowImageTitle" class="block text-sm font-medium text-gray-700">หัวข้อ (Title):</label>
-                                    <input type="text" id="editSlideshowImageTitle" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="editSlideshowImageOrder" class="block text-sm font-medium text-gray-700">ลำดับการแสดงผล:</label>
-                                    <input type="number" id="editSlideshowImageOrder" min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
-                                </div>
-                                <div class="flex items-center">
-                                    <input id="editSlideshowImageIsActive" type="checkbox" class="h-4 w-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500">
-                                    <label for="editSlideshowImageIsActive" class="ml-2 block text-sm text-gray-900">ใช้งานรูปภาพนี้ (Is Active)</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="editSlideshowImageModalMessage" class="px-6 py-2 text-sm"></div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="button" id="saveEditSlideshowImageBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-500 text-base font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 sm:ml-3 sm:w-auto sm:text-sm">
-                        บันทึกการเปลี่ยนแปลง
-                    </button>
-                    <button type="button" id="cancelEditSlideshowImageBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        ยกเลิก
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Slideshow Image Modal -->
-    <div id="viewSlideshowImageModal" class="fixed z-20 inset-0 overflow-y-auto hidden" aria-labelledby="viewSlideshowImageModalTitle" role="dialog" aria-modal="true">
-        <div class="flex items-center justify-center min-h-screen p-4 text-center">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-            <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl w-full p-4">
-                <div class="flex justify-between items-center pb-3">
-                    <h3 class="text-lg font-medium text-gray-900" id="viewSlideshowImageModalTitle">ดูรูปภาพ</h3>
-                    <button type="button" id="closeViewSlideshowImageModalBtn" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-                <img id="viewSlideshowImagePreview" src="" alt="Image Preview" class="w-auto h-auto max-w-full max-h-[80vh] mx-auto">
-                <p id="viewSlideshowImageCaption" class="text-center text-sm text-gray-600 mt-2"></p>
-            </div>
-        </div>
-    </div>
-
+  <?!= include('js/utils'); ?>
   <?!= include('js/main'); ?>
   <?!= include('js/auth'); ?>
   <?!= include('js/user'); ?>

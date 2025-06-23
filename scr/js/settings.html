@@ -1,5 +1,6 @@
 <!-- d:\Github\Queue-augment\js\settings.html -->
 <script>
+
   console.log("js/settings.html: Script execution started. Checking for showAppConfirmationDialog:", typeof showAppConfirmationDialog);
 
    /**
@@ -331,7 +332,6 @@ function saveEditSlideshowImage() {
 }
 
 function deleteSlideshowImage(id) {
-    console.log("deleteSlideshowImage called. Type of showAppConfirmationDialog:", typeof showAppConfirmationDialog);
     showAppConfirmationDialog(
         `คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพ ID: ${id}? การกระทำนี้ไม่สามารถย้อนกลับได้`,
         function() { // onConfirm
@@ -475,7 +475,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // const initialTabButton = document.getElementById('init-system-tab');
     // if (initialTabButton && tabButtons.length > 0 && tabPanes.length > 0) { ... } // Also handled by initializeSettingsPageInteractions
-
     // --- Slideshow Image Modal Event Listeners ---
     const openAddBtn = document.getElementById('openAddSlideshowImageModalBtn');
     if(openAddBtn) openAddBtn.addEventListener('click', openAddSlideshowImageModal);
@@ -1194,8 +1193,8 @@ function onShowSettingsSection() {
     console.log("Settings section shown, loading data...");
      initializeSettingsPageInteractions(); // Initialize or re-initialize interactions
     loadGeneralSettings();
-    loadSoundData(); // Make sure this function is defined and working
-    loadAdminSlideshowImages(); // Load slideshow images when settings are shown
+    loadSoundData();
+    loadAdminSlideshowImages(); // <<<< เพิ่มการเรียกฟังก์ชันนี้
     // Add loading for Announcement Settings tab if you create one
 }
 // Make sure onShowSettingsSection is called when the settings tab/section is actually made visible by your main navigation logic.
@@ -1331,3 +1330,5 @@ function saveSelectedTheme() {
 
 
 </script>
+
+

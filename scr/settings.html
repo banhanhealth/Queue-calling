@@ -530,4 +530,111 @@
         </div>
       </div>
     </div>
+
+    <!-- เพิ่ม modal ต่อไปนี้ไว้ที่ส่วนท้ายของไฟล์ ก่อนปิด body tag -->
+
+<!-- View Slideshow Image Modal -->
+<div id="viewSlideshowImageModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 overflow-hidden">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-700" id="viewSlideshowImageCaption"></h3>
+            <button id="closeViewSlideshowImageModalBtn" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6 flex justify-center">
+            <img id="viewSlideshowImagePreview" src="" alt="Image Preview" class="max-h-96 max-w-full object-contain">
+        </div>
+    </div>
+</div>
+
+<!-- Edit Slideshow Image Modal -->
+<div id="editSlideshowImageModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-700">แก้ไขรูปภาพสไลด์โชว์</h3>
+            <button id="cancelEditSlideshowImageBtn" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <input type="hidden" id="editSlideshowImageId">
+            <div class="mb-4">
+                <label for="editSlideshowImageUrl" class="block text-sm font-medium text-gray-700 mb-1">URL รูปภาพ:</label>
+                <input type="text" id="editSlideshowImageUrl" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label for="editSlideshowImageTitle" class="block text-sm font-medium text-gray-700 mb-1">ชื่อรูปภาพ:</label>
+                <input type="text" id="editSlideshowImageTitle" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label for="editSlideshowImageOrder" class="block text-sm font-medium text-gray-700 mb-1">ลำดับการแสดงผล:</label>
+                <input type="number" id="editSlideshowImageOrder" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="editSlideshowImageIsActive" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-700">แสดงรูปภาพนี้</span>
+                </label>
+            </div>
+            <div id="editSlideshowImageModalMessage" class="px-6 py-2 text-sm"></div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="cancelEditSlideshowImageBtn" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    ยกเลิก
+                </button>
+                <button id="saveEditSlideshowImageBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Slideshow Image Modal -->
+<div id="addSlideshowImageModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-700">เพิ่มรูปภาพสไลด์โชว์ใหม่</h3>
+            <button id="cancelNewSlideshowImageBtn" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-4">
+                <label for="newSlideshowImageUrl" class="block text-sm font-medium text-gray-700 mb-1">URL รูปภาพ:</label>
+                <input type="text" id="newSlideshowImageUrl" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label for="newSlideshowImageTitle" class="block text-sm font-medium text-gray-700 mb-1">ชื่อรูปภาพ:</label>
+                <input type="text" id="newSlideshowImageTitle" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label for="newSlideshowImageOrder" class="block text-sm font-medium text-gray-700 mb-1">ลำดับการแสดงผล:</label>
+                <input type="number" id="newSlideshowImageOrder" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+            </div>
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="newSlideshowImageIsActive" checked class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                    <span class="ml-2 text-sm text-gray-700">แสดงรูปภาพนี้</span>
+                </label>
+            </div>
+            <div id="addSlideshowImageModalMessage" class="px-6 py-2 text-sm"></div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button id="cancelNewSlideshowImageBtn" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    ยกเลิก
+                </button>
+                <button id="saveNewSlideshowImageBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                    บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
