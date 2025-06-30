@@ -81,7 +81,7 @@
       <!-- Left Panel: ส่วนแสดงผลวิดีโอ/สไลด์ และข้อมูลองค์กร -->
       <div class="w-1/2 flex flex-col theme-panel-left relative"> <!-- Parent of the header -->
         <!-- Header ของ Left Panel: แสดงชื่อองค์กร - Adjusted to match user-page header style -->
-        <div class="theme-display-header p-4 flex items-center gap-3 shadow-lg sticky top-0 z-50">
+        <div class="theme-display-header p-6 flex items-center gap-3 shadow-lg sticky top-0 z-50" style="min-height:72px;">
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path
               d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"
@@ -122,16 +122,14 @@
       <!-- Right Panel: ส่วนแสดงผลข้อมูลคิว -->
       <div id="display-page-right-panel" class="w-1/2 flex flex-col theme-panel-right">
         <!-- Header ของ Right Panel: แสดงหัวข้อ "เรียกคิวหมายเลข" และนาฬิกา -->
-        <div class="theme-display-header p-6 flex items-center justify-between"> <!-- shadow-md will be applied by .theme-display-header -->
-          <div class="flex items-center gap-3">
+        <div class="theme-display-header p-6 flex items-center gap-3 shadow-lg sticky top-0 z-50" style="min-height:72px;"> <!-- shadow-md will be applied by .theme-display-header -->        
             <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">
               <path
                 d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
               />
             </svg>
-            <span class="text-xl font-semibold">เรียกคิวหมายเลข</span>
-          </div>
-          <div class="theme-display-time-accent flex items-center gap-2 px-4 py-2 rounded-lg">
+            <span class="text-xl font-semibold">เรียกคิวหมายเลข</span>        
+          
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
@@ -139,8 +137,7 @@
                 clip-rule="evenodd"
               />
             </svg>
-            <div class="text-xl font-bold" id="currentTime"></div>
-          </div>
+            <div class="text-xl font-bold" id="currentTime"></div>          
         </div>
 
         <!-- Current Queue Section: ส่วนแสดงคิวที่กำลังเรียก และรายการคิวอื่นๆ -->

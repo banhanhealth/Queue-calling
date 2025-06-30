@@ -861,7 +861,7 @@ function callNextQueueForService(counterId) {
   // Check if any queue is already 'calling'
   for (let i = 1; i < data.length; i++) { // Skip header
     if (data[i][Q_COL_STATUS_IDX] === 'calling') {
-      return { success: false, message: 'A queue is already being called. Please complete or skip it first.' };
+      return { success: false, message: 'คิวกำลังถูกเรียก กรุณากรอกให้เสร็จหรือข้ามคิวก่อน' };
     }
   }
 

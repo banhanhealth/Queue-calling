@@ -146,10 +146,19 @@ function printQueue() {
   }
 
   function proceedWithActualPrint(settings) {
-    const ticketTitle = (settings && settings.TicketTitle) ? settings.TicketTitle : 'บัตรคิว';
-    const ticketWidth = (settings && settings.TicketWidth) ? settings.TicketWidth : '80'; // Default 80mm
-    const ticketHeight = (settings && settings.TicketHeight) ? settings.TicketHeight : '150'; // Default 150mm
+    // Default values
+    const ticketWidth = (settings && settings.TicketWidth) ? settings.TicketWidth : '50'; // Default 50mm
+    const ticketHeight = (settings && settings.TicketHeight) ? settings.TicketHeight : '80'; // Default 80mm
 
+    // Use OrganizationName as the ticket title if available, otherwise fallback to TicketTitle or 'บัตรคิว'
+    let ticketTitle = 'บัตรคิว';
+    if (settings) {
+      if (settings.OrganizationName && settings.OrganizationName.trim() !== '') {
+        ticketTitle = settings.OrganizationName;
+      } else if (settings.TicketTitle && settings.TicketTitle.trim() !== '') {
+        ticketTitle = settings.TicketTitle;
+      }
+    }
     // Update the content in the hidden printArea one last time
     document.getElementById('printTicketTitle').textContent = ticketTitle; // Ensure this is updated
     document.getElementById('printQueueNumber').textContent = formatQueueNumberForDisplay(lastCreatedQueueNumberUser);
@@ -241,7 +250,7 @@ function printElementWithStyles(elementId, ticketWidthMm, ticketHeightMm) {
         }
         #printQueueNumber {
             font-size: 6em; /* e.g., 60pt - significantly larger */
-            font-weight: 700; /* Bold weight */
+            font-weight: 500; /* Bold weight */
             line-height: 1.1; /* Adjust for large font */
             margin: 0.3em 0; /* Vertical margin */
             color: #000000; /* Ensure queue number is black */
@@ -255,8 +264,11 @@ function printElementWithStyles(elementId, ticketWidthMm, ticketHeightMm) {
             color: #333333; /* Dark gray for date/time */
         }
     `);
-    pri.document.write('</style></head><body>');
-    pri.document.write(elementToPrint.innerHTML); // Get the innerHTML of the div to print
+    
+     pri.document.write('</style></head><body>');
+    // Remove the printDateTime element from the HTML before printing
+    let printHtml = elementToPrint.innerHTML.replace(/<p[^>]*id=["']printDateTime["'][^>]*>.*?<\/p>/s, '');
+    pri.document.write(printHtml); // Print without date/time
     pri.document.write('</body></html>');
     pri.document.close();
 
